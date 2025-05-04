@@ -28,6 +28,9 @@ public class Main extends Application {
     public void start(Stage stage) {
         // Root layout: a BorderPane to place controls at top, center, etc.
         BorderPane root = new BorderPane();
+
+        root.getStyleClass().add("root"); // Add a CSS class to the root pane
+
         // Add padding around the edges of the root pane
         root.setPadding(new Insets(10));
 
@@ -64,6 +67,11 @@ public class Main extends Application {
 
         // Create the main scene, giving it the root layout and initial dimensions
         Scene scene = new Scene(root, 500, 550);
+
+        // some CSS styles for the scene
+        scene.getStylesheets().add(
+                getClass().getResource("/styles.css").toExternalForm()
+        );
 
         // Attach the scene to the stage (window)
         stage.setScene(scene);

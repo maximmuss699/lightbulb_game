@@ -1,0 +1,43 @@
+/* Overall window background: a soft sand gradient */
+.root {
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #f5e6c8,  /* light sand */
+            #e8d5a8   /* darker sand */
+    );
+}
+
+/* The board area: a semi-opaque “plate” on the sand */
+.board-view {
+    -fx-background-color: rgba(255, 250, 240, 0.8);
+    -fx-padding: 10px;       /* space around the grid */
+    -fx-border-color: #d2b48c; /* tan border */
+    -fx-border-width: 3px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* Each tile: smooth, rounded “stone” */
+.tile-button {
+    -fx-background-color: linear-gradient(
+            to bottom right,
+            #fffafa,  /* snow-white highlight */
+            #f5deb3   /* wheat-tone */
+    );
+    -fx-border-color: #d2b48c;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #5a473c;  /* dark brown text */
+    -fx-cursor: hand;
+}
+
+/* Hover makes the tile pop a bit */
+.tile-button:hover {
+    -fx-background-color: #ffffff;
+}
+
+/* Pressed tile looks inset */
+.tile-button:pressed {
+    -fx-background-color: #e8d4ab;
+}

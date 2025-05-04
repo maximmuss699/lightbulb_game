@@ -13,8 +13,13 @@ public class BoardView extends GridPane implements BoardObserver {
     private final Button[][] buttons;
 
     public BoardView(GameBoard model) {
+
+        // Call the superclass constructor
+        super();
+        this.getStyleClass().add("board-view"); // Add a CSS class to the grid pane
+
         this.model = model;
-        model.addObserver(this);
+        model.addObserver(this); // Register this view as an observer of the model
 
         int rows = model.getRows(), cols = model.getCols();
         buttons = new Button[rows][cols];
@@ -36,6 +41,10 @@ public class BoardView extends GridPane implements BoardObserver {
         Tile tile = model.getTile(r, c);
         Button btn = new Button(tile.getType());
         btn.setPrefSize(50, 50);
+
+        // apply the stone-like style
+        btn.getStyleClass().add("tile-button");
+
         applyRotation(btn, tile);
 
         // wrap click into MVC event
