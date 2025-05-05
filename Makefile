@@ -9,6 +9,7 @@ MVN = mvn
 
 .PHONY: all compile run package clean
 
+
 all: compile
 
 compile:

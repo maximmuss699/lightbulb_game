@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fdb90d63-c37b-4055-b9fa-373883822f5e" name="Changes" comment="added some MVC basics">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/styles.css" afterDir="false" />
+    <list default="true" id="fdb90d63-c37b-4055-b9fa-373883822f5e" name="Changes" comment="added some simple stylization">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/controller/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/GameBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/Tile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/WireTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/WireTile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/view/BoardView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/view/BoardView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +140,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746389302419</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added some simple stylization">
+      <option name="closed" value="true" />
+      <created>1746389767129</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746389767129</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,7 +157,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added some basic structure" />
     <MESSAGE value="added some MVC basics" />
-    <option name="LAST_COMMIT_MESSAGE" value="added some MVC basics" />
+    <MESSAGE value="added some simple stylization" />
+    <option name="LAST_COMMIT_MESSAGE" value="added some simple stylization" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

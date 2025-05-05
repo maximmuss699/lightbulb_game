@@ -1,43 +1,55 @@
-/* Overall window background: a soft sand gradient */
+/* Overall window background: dark gradient */
 .root {
     -fx-background-color: linear-gradient(
-            to bottom,
-            #f5e6c8,  /* light sand */
-            #e8d5a8   /* darker sand */
+        to bottom,
+        #000000,  /* black */
+        #1a1a1a   /* very dark gray */
     );
 }
 
-/* The board area: a semi-opaque “plate” on the sand */
+/* The board area: semi-opaque dark plate */
 .board-view {
-    -fx-background-color: rgba(255, 250, 240, 0.8);
-    -fx-padding: 10px;       /* space around the grid */
-    -fx-border-color: #d2b48c; /* tan border */
+    -fx-background-color: rgba(20, 20, 20, 0.9);
+    -fx-padding: 10px;
+    -fx-border-color: #444444; /* dark gray border */
     -fx-border-width: 3px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
 }
 
-/* Each tile: smooth, rounded “stone” */
+/* Each tile: dark stone with light text */
 .tile-button {
     -fx-background-color: linear-gradient(
-            to bottom right,
-            #fffafa,  /* snow-white highlight */
-            #f5deb3   /* wheat-tone */
+        to bottom right,
+        #444444,  /* dark gray */
+        #222222   /* almost black */
     );
-    -fx-border-color: #d2b48c;
+    -fx-border-color: #888888;   /* medium gray border */
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-font-size: 14px;
-    -fx-text-fill: #5a473c;  /* dark brown text */
+    -fx-text-fill: #ffffff;      /* white text */
     -fx-cursor: hand;
 }
 
-/* Hover makes the tile pop a bit */
+/* Hover effect: lighten tile slightly */
 .tile-button:hover {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #555555;
 }
 
-/* Pressed tile looks inset */
+/* Pressed tile: darken slightly */
 .tile-button:pressed {
-    -fx-background-color: #e8d4ab;
+    -fx-background-color: #333333;
+}
+
+/* Powered tile styling: bright green glow */
+.tile-powered {
+    -fx-background-color: #00ff00; /* bright green */
+    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.8), 10,0,0,0);
+}
+
+/* Unpowered tile styling: bright red glow */
+.tile-unpowered {
+    -fx-background-color: #ff0000; /* bright red */
+    -fx-effect: dropshadow(gaussian, rgba(255,0,0,0.8), 10,0,0,0);
 }
