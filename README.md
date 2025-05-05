@@ -105,12 +105,6 @@ lightbulbgame/
 
 ---
 
-## 📄 Licence
-
-Projekt je distribuován pod licencí MIT. Více v souboru [LICENSE](LICENSE).
-
----
-
 ---
 
 ## 📝 Log přidaných souborů

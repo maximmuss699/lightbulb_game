@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fdb90d63-c37b-4055-b9fa-373883822f5e" name="Changes" comment="added some simple stylization">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/controller/GameController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/GameBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/Tile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/WireTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/model/WireTile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/view/BoardView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cz/vut/ija/game/view/BoardView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles.css" afterDir="false" />
-    </list>
+    <list default="true" id="fdb90d63-c37b-4055-b9fa-373883822f5e" name="Changes" comment="added all types of tiles + level generator (Need to be fixed with connection to all bulbs, now it can connect only one bulb)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,6 +20,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "maximmuss699"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/maximmuss699/lightbulb_game",
+    "accountId": "26538dc4-5384-4bb1-bffd-8bcb48ad9172"
+  }
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -109,8 +112,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.59" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.59" />
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
       </set>
     </attachedChunks>
   </component>
@@ -131,6 +134,7 @@
       <workItem from="1746374050686" duration="1425000" />
       <workItem from="1746375500522" duration="746000" />
       <workItem from="1746376260878" duration="1770000" />
+      <workItem from="1746439272160" duration="577000" />
     </task>
     <task id="LOCAL-00001" summary="added some MVC basics">
       <option name="closed" value="true" />
@@ -148,7 +152,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746389767129</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="added all types of tiles + level generator (Need to be fixed with connection to all bulbs, now it can connect only one bulb)">
+      <option name="closed" value="true" />
+      <created>1746439742839</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1746439742839</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,7 +170,8 @@
     <MESSAGE value="added some basic structure" />
     <MESSAGE value="added some MVC basics" />
     <MESSAGE value="added some simple stylization" />
-    <option name="LAST_COMMIT_MESSAGE" value="added some simple stylization" />
+    <MESSAGE value="added all types of tiles + level generator (Need to be fixed with connection to all bulbs, now it can connect only one bulb)" />
+    <option name="LAST_COMMIT_MESSAGE" value="added all types of tiles + level generator (Need to be fixed with connection to all bulbs, now it can connect only one bulb)" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
