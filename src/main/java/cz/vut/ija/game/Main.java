@@ -22,7 +22,7 @@ import java.util.Objects;
 
 /**
  * Main application class for the LightBulb Puzzle Game.
- * Sets up the JavaFX stage, scene, and core UI elements,
+ * Sets up the JavaFX stage, scene, and core UI elements
  * and delegates game logic and view management to GameController.
  */
 public class Main extends Application implements GameSettingsView.SettingsChangeListener {
@@ -45,6 +45,9 @@ public class Main extends Application implements GameSettingsView.SettingsChange
     // Default settings
     private String boardSize = "5×5";
     private int bulbCount = 3;
+    private boolean timedModeEnabled = false;
+    private int timeLimit = 60; // default value in seconds
+
 
     /**
      * JavaFX entry point method, called when the application is launched.
@@ -59,7 +62,7 @@ public class Main extends Application implements GameSettingsView.SettingsChange
         //root.setPadding(new Insets(10));   // Add uniform padding around the layout
 
         // Create the JavaFX scene with specified dimensions
-        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         // Attach external CSS stylesheet for consistent styling
         scene.getStylesheets().add(
                 Objects.requireNonNull(
@@ -107,7 +110,7 @@ public class Main extends Application implements GameSettingsView.SettingsChange
     }
 
     private void showSettings() {
-        settingsView.updateUI(boardSize, bulbCount);
+        settingsView.updateUI(boardSize, bulbCount, timedModeEnabled, timeLimit);
         root.setCenter(settingsView);
     }
 
@@ -124,6 +127,19 @@ public class Main extends Application implements GameSettingsView.SettingsChange
     public void onBulbCountChanged(int newCount) {
         bulbCount = newCount;
         System.out.println("Lightbulb count changed to: " + newCount);
+    }
+
+    @Override
+    public void onTimedModeChanged(boolean enabled, int timeLimit) {
+        this.timedModeEnabled = enabled;
+        this.timeLimit = timeLimit;
+        System.out.println("Timed mode " + (enabled ? "enabled" : "disabled"));
+    }
+
+    @Override
+    public void onTimeLimitChanged(int newTimeLimit) {
+        this.timeLimit = newTimeLimit;
+        System.out.println("Time limit changed to: " + newTimeLimit + "s");
     }
 
     // Starts a new game
