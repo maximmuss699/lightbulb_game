@@ -16,12 +16,13 @@ import javafx.scene.text.FontWeight;
 /**
  * Settings screen. Used for customizing the game behavior.
  */
-public class GameSettingsView extends VBox {
+public class CustomGameView extends VBox {
 
     private final ComboBox<String> boardSizeSelector;
     private final ComboBox<Integer> bulbSelector;
     private final ComboBox<Integer> timeSelector;
     private final CheckBox timedModeCheckbox;
+    private final Button startGameButton;
     private final Button backButton;
 
 
@@ -35,7 +36,7 @@ public class GameSettingsView extends VBox {
 
     private SettingsChangeListener changeListener;
 
-    public GameSettingsView() {
+    public CustomGameView() {
         setAlignment(Pos.CENTER);
         setSpacing(20);
         setPadding(new Insets(50));
@@ -109,10 +110,15 @@ public class GameSettingsView extends VBox {
         });
 
         // Buttons
+        startGameButton = new Button("Start");
+        startGameButton.getStyleClass().add("menu-button");
+        startGameButton.setPrefWidth(120);
+
         backButton = new Button("Back");
         backButton.getStyleClass().add("menu-button");
+        backButton.setPrefWidth(120);
 
-        HBox buttonBox = new HBox(15, backButton);
+        HBox buttonBox = new HBox(15, backButton, startGameButton);
         buttonBox.setAlignment(Pos.CENTER);
 
         // Add everything to the layout
@@ -155,6 +161,10 @@ public class GameSettingsView extends VBox {
 
     public CheckBox getTimedModeCheckbox() {
         return timedModeCheckbox;
+    }
+
+    public Button getStartGameButton() {
+        return startGameButton;
     }
 
     public Button getBackButton() {

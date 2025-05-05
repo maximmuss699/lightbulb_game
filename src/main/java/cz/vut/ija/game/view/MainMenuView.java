@@ -14,7 +14,6 @@ import javafx.scene.text.FontWeight;
 public class MainMenuView extends VBox {
 
     private final Button startGameButton;
-    private final Button gameSettingsButton; // game settings like grid size or number of bulbs
     private final Button exitButton;
 
     public MainMenuView() {
@@ -33,11 +32,6 @@ public class MainMenuView extends VBox {
         startGameButton.getStyleClass().add("menu-button");
         startGameButton.setPrefWidth(200);
 
-        // settings
-        gameSettingsButton = new Button("Settings");
-        gameSettingsButton.getStyleClass().add("menu-button");
-        gameSettingsButton.setPrefWidth(200);
-
         // exit
         exitButton = new Button("Exit");
         exitButton.getStyleClass().add("menu-button");
@@ -47,17 +41,12 @@ public class MainMenuView extends VBox {
         getChildren().addAll(
                 titleLabel,
                 startGameButton,
-                gameSettingsButton,
                 exitButton
         );
     }
 
     public Button getStartGameButton() {
         return startGameButton;
-    }
-
-    public Button getGameSettingsButton() {
-        return gameSettingsButton;
     }
 
     public Button getExitButton() {

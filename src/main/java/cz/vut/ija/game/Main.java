@@ -1,15 +1,12 @@
 package cz.vut.ija.game;
 
 import cz.vut.ija.game.controller.GameController;
-import cz.vut.ija.game.view.GameSettingsView;
+import cz.vut.ija.game.view.DifficultySelectView;
+import cz.vut.ija.game.view.CustomGameView;
 import cz.vut.ija.game.view.MainMenuView;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import cz.vut.ija.game.generator.LevelGenerator;
 import cz.vut.ija.game.model.GameBoard;
 import javafx.scene.control.Button;
@@ -25,7 +22,7 @@ import java.util.Objects;
  * Sets up the JavaFX stage, scene, and core UI elements
  * and delegates game logic and view management to GameController.
  */
-public class Main extends Application implements GameSettingsView.SettingsChangeListener {
+public class Main extends Application implements CustomGameView.SettingsChangeListener {
 
     private static final int WINDOW_WIDTH = 600;
     private static final int WINDOW_HEIGHT = 650;
@@ -38,7 +35,8 @@ public class Main extends Application implements GameSettingsView.SettingsChange
      * Component MainMenuView serves as an entry point, and the settings view is used for setting up the game.
      */
     private MainMenuView mainMenu;
-    private GameSettingsView settingsView;
+    private DifficultySelectView difficultyView;
+    private CustomGameView settingsView;
     private GameController gameController;
     private Label moveLabel;
 
@@ -88,7 +86,8 @@ public class Main extends Application implements GameSettingsView.SettingsChange
      */
     private void initializeComponents() {
         mainMenu = new MainMenuView();
-        settingsView = new GameSettingsView();
+        difficultyView = new DifficultySelectView();
+        settingsView = new CustomGameView();
         settingsView.setSettingsChangeListener(this);
     }
 
@@ -97,21 +96,60 @@ public class Main extends Application implements GameSettingsView.SettingsChange
      */
     private void setupEventHandlers() {
         // Main menu
-        mainMenu.getStartGameButton().setOnAction(e -> startNewGame());
-        mainMenu.getGameSettingsButton().setOnAction(e -> showSettings());
+        mainMenu.getStartGameButton().setOnAction(e -> showDifficultySelect());
         mainMenu.getExitButton().setOnAction(e -> Platform.exit());
 
-        // Settings
-        settingsView.getBackButton().setOnAction(e -> showMainMenu());
+        // Difficulty select screen
+        difficultyView.getEasyButton().setOnAction(e -> startGameWithDifficulty("easy"));
+        difficultyView.getMediumButton().setOnAction(e -> startGameWithDifficulty("medium"));
+        difficultyView.getHardButton().setOnAction(e -> startGameWithDifficulty("hard"));
+        difficultyView.getCustomButton().setOnAction(e -> showSettings());
+        difficultyView.getBackButton().setOnAction(e -> showMainMenu());
+
+        // Custom settings
+        settingsView.getStartGameButton().setOnAction(e -> startNewGame());
+        settingsView.getBackButton().setOnAction(e -> showDifficultySelect());
     }
 
     private void showMainMenu() {
         root.setCenter(mainMenu);
     }
 
+    /**
+     * Show the difficulty selection screen
+     */
+    private void showDifficultySelect() {
+        root.setCenter(difficultyView);
+    }
+
     private void showSettings() {
         settingsView.updateUI(boardSize, bulbCount, timedModeEnabled, timeLimit);
         root.setCenter(settingsView);
+    }
+
+    /**
+     * Start a new game with predefined settings based on difficulty level
+     */
+    private void startGameWithDifficulty(String difficulty) {
+        switch(difficulty) {
+            case "easy":
+                boardSize = "5×5";
+                bulbCount = 2;
+                timedModeEnabled = false;
+                break;
+            case "medium":
+                boardSize = "8×8";
+                bulbCount = 4;
+                timedModeEnabled = false;
+                break;
+            case "hard":
+                boardSize = "10×10";
+                bulbCount = 5;
+                timedModeEnabled = false;
+                break;
+        }
+
+        startNewGame();
     }
 
     /**
@@ -144,6 +182,17 @@ public class Main extends Application implements GameSettingsView.SettingsChange
 
     // Starts a new game
     private void startNewGame() {
+        System.out.println("========== STARTING NEW GAME ==========");
+        System.out.println("Board size: " + boardSize);
+        System.out.println("Lightbulb count: " + bulbCount);
+
+        if (timedModeEnabled) {
+            System.out.println("Timed mode: ENABLED, time limit: " + timeLimit + " seconds");
+        } else {
+            System.out.println("Timed mode: DISABLED");
+        }
+        System.out.println("=======================================");
+
         // Parsování velikosti desky
         String[] dimensions = boardSize.split("×");
         int rows = Integer.parseInt(dimensions[0]);
