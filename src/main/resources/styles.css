@@ -7,6 +7,56 @@
     );
 }
 
+/* Main menu and settings menu styles */
+.main-menu, .settings-menu {
+    -fx-background-color: rgba(20, 20, 20, 0.9);
+    -fx-padding: 20px;
+    -fx-border-color: #444444;
+    -fx-border-width: 3px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* Menu title styles */
+.menu-title, .settings-title {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.6), 8, 0, 0, 0);
+    -fx-padding: 0 0 10 0;
+}
+
+.settings-menu Label {
+    -fx-text-fill: white;
+}
+
+/* Menu button styles */
+.menu-button {
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #444444,
+            #222222
+    );
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10 20;
+    -fx-border-color: #888888;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #555555,
+            #333333
+    );
+    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.4), 8, 0, 0, 0);
+}
+
+.menu-button:pressed {
+    -fx-background-color: #333333;
+}
+
 /* The board area: semi-opaque dark plate */
 .board-view {
     -fx-background-color: rgba(20, 20, 20, 0.9);
