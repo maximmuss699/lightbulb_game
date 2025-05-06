@@ -24,8 +24,8 @@ import java.util.Objects;
  */
 public class Main extends Application implements CustomGameView.SettingsChangeListener {
 
-    private static final int WINDOW_WIDTH = 600;
-    private static final int WINDOW_HEIGHT = 650;
+    private static final int WINDOW_WIDTH = 1000;
+    private static final int WINDOW_HEIGHT = 1000;
 
     private Scene scene;
     private BorderPane root;

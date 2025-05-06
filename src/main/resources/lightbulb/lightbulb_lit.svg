@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100"
+     xmlns="http://www.w3.org/2000/svg">
+
+    <!-- pozadí -->
+    <rect width="100" height="100" rx="5" fill="#222"/>
+
+    <defs>
+        <radialGradient id="powerGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#33CCFF"/>
+            <stop offset="100%" stop-color="#0066FF"/>
+        </radialGradient>
+
+        <radialGradient id="neonInner" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="50">
+            <stop offset="0%" stop-color="#99DDFF"/>
+            <stop offset="100%" stop-color="#66CCFF"/>
+        </radialGradient>
+
+        <!-- neonový gradient pro obrys a základ -->
+        <linearGradient id="neonBody">
+            <stop offset="0%" stop-color="#00AFFF"/>
+            <stop offset="100%" stop-color="#00AFFF"/>
+        </linearGradient>
+
+        <!-- vzor vodorovných kontrastních pruhů -->
+        <pattern id="stripes" patternUnits="userSpaceOnUse" width="8" height="8">
+            <!-- jasné pruhy -->
+            <rect width="8" height="4" fill="#88FFFF"/>
+        </pattern>
+
+        <!-- glow filtr pro obrys -->
+        <filter id="glow" x="-200%" y="-200%" width="400%" height="400%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+
+        <!-- glow filtr pro pin -->
+        <filter id="powerGlow" x="-200%" y="-200%" width="400%" height="400%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+
+    <rect x="45" y="78" width="10" height="22"
+          fill="url(#powerGrad)"
+          filter="url(#powerGlow)"
+          stroke-linecap="butt" stroke-linejoin="miter"/>
+
+    <!-- vnitřní neonová linka (gradient) - ZA diamantem -->
+    <rect x="47" y="78" width="6" height="22"
+          fill="url(#neonInner)"
+          stroke-linecap="butt" stroke-linejoin="miter"/>
+
+    <!-- základní neonový fill hexagonu -->
+    <polygon points="50,20 72,35 72,65 50,80 28,65 28,35"
+             fill="url(#neonBody)"
+             stroke="none"/>
+
+    <!-- kontrastní jasné pruhy -->
+    <polygon points="50,20 72,35 72,65 50,80 28,65 28,35"
+             fill="url(#stripes)"
+             stroke="none"/>
+
+    <!-- neonový obrys hexagonu -->
+    <polygon points="50,20 72,35 72,65 50,80 28,65 28,35"
+             fill="none"
+             stroke="url(#neonBody)" stroke-width="2"
+             filter="url(#glow)"
+             stroke-linejoin="round"/>
+</svg>

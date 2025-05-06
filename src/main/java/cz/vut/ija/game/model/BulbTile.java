@@ -13,10 +13,10 @@ public class BulbTile extends Tile {
 
     /**
      * Base connection side for the BulbTile.
-     * By convention, at rotation=0 it connects upward (NORTH).
+     * By convention, at rotation=0 it connects downwards (SOUTH) - so the logic is the same as for the source tile.
      */
     @Override
     public Set<Side> getBaseSides() {
-        return EnumSet.of(Side.NORTH);
+        return EnumSet.of(Side.SOUTH);
     }
 }

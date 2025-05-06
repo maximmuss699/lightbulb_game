@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <!-- pozadí -->
+  <rect width="100" height="100" rx="5" fill="#222"/>
+
+  <defs>
+    <!-- neonový gradient těla -->
+    <radialGradient id="powerGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#33CCFF"/>
+      <stop offset="100%" stop-color="#0066FF"/>
+    </radialGradient>
+
+    <!-- neonový vnitřní drátek pro nožku -->
+    <radialGradient id="neonInner" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="50">
+      <stop offset="0%" stop-color="#99DDFF"/>
+      <stop offset="100%" stop-color="#66CCFF"/>
+    </radialGradient>
+
+    <!-- gradient pro okraj diamantu -->
+    <filter id="diamondGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feComposite in="blur" in2="SourceAlpha" operator="out" result="glowOutline"/>
+      <feFlood flood-color="#33CCFF" flood-opacity="1" result="glowColor"/>
+      <feComposite in="glowColor" in2="glowOutline" operator="in" result="softGlow"/>
+      <feMerge>
+        <feMergeNode in="softGlow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- glow filtr pro pin -->
+    <filter id="powerGlow" x="-200%" y="-200%" width="400%" height="400%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- vnější neonový tubus + glow (v modré barvě) - ZA diamantem -->
+  <rect x="45" y="80" width="10" height="20"
+        fill="url(#powerGrad)"
+        filter="url(#powerGlow)"
+        stroke-linecap="butt" stroke-linejoin="miter"/>
+
+  <!-- vnitřní neonová linka (gradient) - ZA diamantem -->
+  <rect x="47" y="80" width="6" height="20"
+        fill="url(#neonInner)"
+        stroke-linecap="butt" stroke-linejoin="miter"/>
+
+  <!-- diamantový krystal s glow efektem - PŘED nožkou -->
+  <polygon points="50,15 85,50 50,85 15,50"
+           fill="url(#powerGrad)"
+           stroke="#33CCFF" stroke-width="2"
+           stroke-linejoin="round"
+           filter="url(#diamondGlow)"/>
+
+  <!-- vyplněný blesk (vnitřek) -->
+  <path d="M325.662,3.768C324.325,1.437,321.844,0,319.157,0H164.555c-3.218,0-6.078,2.053-7.107,5.102L91.19,201.421
+    c-0.772,2.289-0.394,4.81,1.014,6.772c1.409,1.962,3.677,3.126,6.093,3.126h62.812L88.817,404.876
+    c-1.278,3.422,0.096,7.268,3.254,9.106c1.18,0.686,2.48,1.018,3.769,1.018c2.16,0,4.287-0.932,5.756-2.687l201.228-240.49
+    c1.869-2.234,2.276-5.348,1.043-7.987c-1.232-2.639-3.882-4.326-6.795-4.326h-58.094l86.654-148.224
+    C326.988,8.966,327,6.099,325.662,3.768z"
+        fill="white"
+        stroke="white"
+        stroke-width="0.5"
+        transform="translate(30,30) scale(0.10)"
+        fill-rule="evenodd"/>
+</svg>

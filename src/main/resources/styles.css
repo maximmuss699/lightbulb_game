@@ -1,11 +1,8 @@
 /* Overall window background: dark gradient */
 .root {
-    -fx-background-color: linear-gradient(
-        to bottom,
-        #000000,  /* black */
-        #1a1a1a   /* very dark gray */
-    );
+    -fx-background-color: linear-gradient(to bottom, #0a0a0a, #1a1a2e);
 }
+
 
 /* Main menu and settings menu styles */
 .main-menu, .settings-menu {
