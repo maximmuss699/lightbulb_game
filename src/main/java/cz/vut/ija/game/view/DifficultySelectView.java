@@ -62,7 +62,7 @@ public class DifficultySelectView extends VBox {
         backButton.getStyleClass().add("menu-button");
         backButton.setPrefWidth(200);
         
-        // Add components to layout
+        // Add components to the layout
         getChildren().addAll(
                 titleLabel,
                 easyButton,
