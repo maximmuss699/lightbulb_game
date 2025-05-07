@@ -2,204 +2,250 @@ package cz.vut.ija.game.generator;
 
 import cz.vut.ija.game.model.*;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 /**
- * LevelGenerator: builds a valid wiring solution and then scrambles tile rotations
- * to create a playable puzzle.
+ * LevelGenerator: generuje řešení podobné hře LightBulb:
+ * 1) Vytvoří náhodný strom procházení (perfect maze) přes celé pole.
+ * 2) Vybere náhodné listové uzly jako pozice žárovek (BulbTile).
+ * 3) Ostatní spoje se vykreslí jako vodiče (Wire/L/T/X).
+ * 4) Většina přímých segmentů I se s pravděpodobností T_BIAS změní na T.
+ * 5) Po dokončení se otáčky dílků promíchají, aby žádná žárovka nesvítila.
+ *
+ * Všechny kroky generování jsou zalogovány v konzoli.
  */
 public class LevelGenerator {
+    private static final double T_BIAS = 0.4;
     private final int rows, cols, bulbCount;
     private final Random rnd = new Random();
 
     public LevelGenerator(int rows, int cols, int bulbCount) {
         if (bulbCount < 1) throw new IllegalArgumentException("bulbCount>=1");
-        this.rows = rows; this.cols = cols; this.bulbCount = bulbCount;
+        this.rows = rows;
+        this.cols = cols;
+        this.bulbCount = bulbCount;
     }
 
-    /**
-     * Generates a new puzzle GameBoard by first constructing a solved wiring layout
-     * and then randomizing each tile's rotation so that no bulb is lit initially.
-     *
-     * @return a GameBoard instance containing the scrambled puzzle
-     */
     public GameBoard generatePuzzle() {
-        // Step 1: Generate the solved wiring solution as a 2D Tile array
+        System.out.println("=== GENERATING PUZZLE ===");
         Tile[][] solution = generateSolutionTiles();
+        System.out.println("Tree generation complete. Building GameBoard and scrambling rotations.");
         GameBoard board = new GameBoard(solution);
-
-        // Step 2: Randomize each tile's rotation (different from its solution orientation)
+        // Zamícháme rotace dílků
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 Tile t = solution[r][c];
-                int orig = t.getRotation();
-                int newRot;
-                do { newRot = rnd.nextInt(4)*90; }
-                while (newRot == orig);
-                t.setRotation(newRot);
-                board.setTileRotation(r, c, newRot);
+                int orig = t.getRotation(), rot;
+                do { rot = rnd.nextInt(4)*90; } while (rot == orig);
+                t.setRotation(rot);
+                board.setTileRotation(r, c, rot);
             }
         }
+        System.out.println("Puzzle ready (scrambled).\n");
         return board;
     }
 
-    /**
-     * Constructs a 2D array of Tile objects in the correct orientation
-     * forming a single power source connected to all bulbs via wires.
-     *
-     * @return a matrix of Tiles representing the solved layout
-     */
     private Tile[][] generateSolutionTiles() {
-        // Choose a random cell to be the power source
-        Position source = new Position(rnd.nextInt(rows), rnd.nextInt(cols));
-        // Randomly select bulbCount distinct positions (excluding the source)
-        Set<Position> bulbs = new HashSet<>();
-        while (bulbs.size() < bulbCount) {
-            Position p = new Position(rnd.nextInt(rows), rnd.nextInt(cols));
-            if (!p.equals(source)) bulbs.add(p);
+        Position start = new Position(rnd.nextInt(rows), rnd.nextInt(cols));
+        System.out.println("Start cell: " + start);
+        // 1) Vygenerování dokonalého labyrintu (perfect maze) pomocí DFS
+        Map<Position, Set<Side>> conn = new HashMap<>();
+        Set<Position> visited = new HashSet<>();
+        System.out.println("Carving perfect maze...");
+        dfsCarve(start, visited, conn);
+        System.out.println("Perfect maze carved. Total cells visited: " + visited.size());
+        // Проверка на связность всего поля
+        if (visited.size() == rows * cols) {
+            System.out.println("Check: all " + visited.size() + " cells are connected in a single tree.");
+        } else {
+            System.out.println("Warning: only " + visited.size() + " out of " + (rows*cols) + " cells are connected!");
         }
 
-        // Build a minimum spanning tree connecting the source to each bulb
-        Map<Position, Set<Side>> connMap = new HashMap<>();
-        BiConsumer<Position, Position> connect = (a,b) -> {
-            Side s = sideBetween(a,b);
-            connMap.computeIfAbsent(a, k->new HashSet<>()).add(s);
-            connMap.computeIfAbsent(b, k->new HashSet<>()).add(s.opposite());
-        };
+        // 2) Nalezení listů (stupeň 1) s výjimkou startu
+        List<Position> leaves = new ArrayList<>();
+        for (Position p : conn.keySet()) {
+            int deg = conn.get(p).size();
+            if (deg == 1 && !p.equals(start)) leaves.add(p);
+        }
+        System.out.println("Found leaves (potential bulbs): " + leaves);
+        // Odstranění listů v manhattanském dosahu ≤1 od startu.
+        leaves.removeIf(p -> Math.abs(p.getRow() - start.getRow()) + Math.abs(p.getCol() - start.getCol()) <= 1);
+        System.out.println("Filtered leaves (outside radius): " + leaves);
+        if (leaves.size() < bulbCount) {
+            System.out.println("Warning: leaves.size() < bulbCount, adjusting selection.");
+        }
 
-        // For each bulb: find a BFS path and connect pairs sequentially
-        for (Position bulb : bulbs) {
-            Map<Position,Position> parent = new HashMap<>();
-            Queue<Position> q = new ArrayDeque<>();
-            parent.put(source, null);
-            q.add(source);
-            Position end = null;
-            // Perform BFS to find a path from the source to this bulb
-            // Block other bulbs from being used as intermediate nodes
-            while (!q.isEmpty()) {
-                Position cur = q.poll();
-                if (cur.equals(bulb)) { end = cur; break; }
-                for (Side s : Side.values()) {
-                    Position nxt = cur.step(s);
-                    if (inBounds(nxt)
-                        && !parent.containsKey(nxt)
-                        && (!bulbs.contains(nxt) || nxt.equals(bulb))) {
-                        parent.put(nxt, cur);
-                        q.add(nxt);
-                    }
+        // 3) Výběr pozic žárovek
+        Collections.shuffle(leaves, rnd);
+        Set<Position> bulbs = new LinkedHashSet<>(leaves.subList(0, Math.min(bulbCount, leaves.size())));
+        System.out.println("Selected bulb positions: " + bulbs);
+        // Проверка: все ли лампочки достижимы из построенного дерева
+        Set<Position> reach = new HashSet<>();
+        Deque<Position> dq = new ArrayDeque<>();
+        reach.add(start); dq.add(start);
+        while (!dq.isEmpty()) {
+            Position curPos = dq.poll();
+            for (Side s : conn.getOrDefault(curPos, Collections.emptySet())) {
+                Position next = curPos.step(s);
+                if (!reach.contains(next)) {
+                    reach.add(next);
+                    dq.add(next);
                 }
             }
-            // restore path and connect pairs
-            for (Position cur = end; parent.get(cur) != null; cur = parent.get(cur)) {
-                connect.accept(parent.get(cur), cur);
+        }
+        if (reach.containsAll(bulbs)) {
+            System.out.println("Check: DFS-carve connected source to all bulbs.");
+        } else {
+            Set<Position> unreachable = new HashSet<>(bulbs);
+            unreachable.removeAll(reach);
+            System.out.println("Check: some bulbs unreachable: " + unreachable);
+        }
+        // Проверка: все ли лампочки достижимы из источника в полученном дереве
+        Set<Position> reachable = new HashSet<>();
+        Deque<Position> queue = new ArrayDeque<>();
+        reachable.add(start); queue.add(start);
+        while (!queue.isEmpty()) {
+            Position cur = queue.poll();
+            for (Side s : conn.getOrDefault(cur, Collections.emptySet())) {
+                Position next = cur.step(s);
+                if (!reachable.contains(next)) {
+                    reachable.add(next);
+                    queue.add(next);
+                }
             }
         }
+        boolean allReachable = true;
+        for (Position b : bulbs) {
+            if (!reachable.contains(b)) { allReachable = false; break; }
+        }
+        if (allReachable) {
+            System.out.println("Check passed: all bulbs reachable from source.");
+        } else {
+            System.out.println("Check failed: some bulbs NOT reachable! Reachable set: " + reachable);
+        }
 
-        // Instantiate each tile based on how many connections it needs:
-        // - SourceTile for the source position
-        // - BulbTile for bulb positions with one connection
-        // - WireTile, LTile, TTile, or XTile for other positions
+        // 4) Přidání T-bias (změna některých I na T)
+        System.out.println("Applying T-bias (" + T_BIAS + ") to straight segments...");
+        addTBias(conn);
+        System.out.println("T-bias applied.");
+
+        // 5) Sestavení matice dílků
+        System.out.println("Building tile matrix...");
         Tile[][] tiles = new Tile[rows][cols];
-        for(int r=0; r<rows; r++){
-            for(int c=0; c<cols; c++){
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
                 Position p = new Position(r, c);
-                Set<Side> needs = connMap.getOrDefault(p, Collections.emptySet());
+                Set<Side> needs = conn.getOrDefault(p, Collections.emptySet());
                 Tile t;
-                if (p.equals(source)) {
-                    // Source tile must always be placed at the source position
+                if (p.equals(start)) {
                     t = new SourceTile();
+                } else if (bulbs.contains(p)) {
+                    t = new BulbTile();            // leaf
                 } else {
-                    // Other tiles based on required connections
-                    switch (needs.size()) {
-                        case 0:
-                            t = new WireTile();
-                            break;
-                        case 1:
-                            if (bulbs.contains(p)) {
-                                t = new BulbTile();
-                            } else {
-                                t = new WireTile();
-                            }
-                            break;
-                        case 2:
-                            Iterator<Side> it = needs.iterator();
-                            Side a = it.next(), b = it.next();
-                            if (a.opposite() == b) {
-                                t = new WireTile();
-                            } else {
-                                t = new LTile();
-                            }
-                            break;
-                        case 3:
-                            t = new TTile();
-                            break;
-                        case 4:
-                            t = new XTile();
-                            break;
-                        default:
-                            t = new WireTile();
-                    }
+                    t = chooseWire(needs);
                 }
-                // Set the correct orientation
                 int rot = computeRotation(needs, t);
                 t.setRotation(rot);
                 tiles[r][c] = t;
             }
         }
+        System.out.println("Tile matrix built.\n");
         return tiles;
     }
 
-    /**
-     * Computes the correct rotation angle for a tile so that its base
-     * connection sides match the required 'needs' set.
-     *
-     * @param needs the set of sides this tile must connect to
-     * @param t the tile whose base connection pattern is used
-     * @return rotation in degrees (0, 90, 180, 270)
-     */
+    private void dfsCarve(Position cur, Set<Position> visited, Map<Position,Set<Side>> conn) {
+        visited.add(cur);
+        List<Side> dirs = new ArrayList<>(Arrays.asList(Side.values()));
+        Collections.shuffle(dirs, rnd);
+        for (Side s : dirs) {
+            Position nxt = cur.step(s);
+            if (!inBounds(nxt) || visited.contains(nxt)) continue;
+            // vyříznout spojení (carve)
+            conn.computeIfAbsent(cur, k->new HashSet<>()).add(s);
+            conn.computeIfAbsent(nxt, k->new HashSet<>()).add(s.opposite());
+            if (visited.size() % 10 == 0) {
+                System.out.println("  DFS visited " + visited.size() + " cells...");
+            }
+            dfsCarve(nxt, visited, conn);
+        }
+    }
+
+    private void addTBias(Map<Position,Set<Side>> conn) {
+        for (Position p : new ArrayList<>(conn.keySet())) {
+            Set<Side> sides = conn.get(p);
+            if (sides.size() == 2) {
+                Iterator<Side> it = sides.iterator(); Side a = it.next(), b = it.next();
+                if (a.opposite() == b && rnd.nextDouble() < T_BIAS) {
+                    for (Side s : Side.values()) {
+                        if (!sides.contains(s)) {
+                            Position np = p.step(s);
+                            if (inBounds(np)) {
+                                conn.get(p).add(s);
+                                conn.computeIfAbsent(np, k->new HashSet<>()).add(s.opposite());
+                                System.out.println("  T-bias: added branch at " + p + " towards " + np);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Tile chooseWire(Set<Side> need) {
+        switch (need.size()) {
+            case 0: case 1: return new WireTile();
+            case 2: {
+                Iterator<Side> it = need.iterator(); Side a = it.next(), b = it.next();
+                return (a.opposite() == b) ? new WireTile() : new LTile();
+            }
+            case 3: return new TTile();
+            case 4: return new XTile();
+            default: return new WireTile();
+        }
+    }
+
     private int computeRotation(Set<Side> needs, Tile t) {
         Set<Side> base;
         switch (t.getType()) {
-            case "I": base = EnumSet.of(Side.NORTH, Side.SOUTH); break;
-            case "L": base = EnumSet.of(Side.NORTH, Side.EAST); break;
-            case "T": base = EnumSet.of(Side.NORTH, Side.EAST, Side.SOUTH); break;
+            case "I": base = EnumSet.of(Side.NORTH,Side.SOUTH); break;
+            case "L": base = EnumSet.of(Side.NORTH,Side.EAST); break;
+            case "T": base = EnumSet.of(Side.NORTH,Side.EAST,Side.SOUTH); break;
             case "X": base = EnumSet.allOf(Side.class); break;
             case "S": base = EnumSet.of(Side.SOUTH); break;
             case "B": base = EnumSet.of(Side.NORTH); break;
-            default: base = EnumSet.noneOf(Side.class);
+            default:  base = EnumSet.noneOf(Side.class);
         }
-        for (int k=0; k<4; k++) {
-            Set<Side> rotated = EnumSet.noneOf(Side.class);
+        for (int k = 0; k < 4; k++) {
+            Set<Side> rotSides = EnumSet.noneOf(Side.class);
             for (Side s : base) {
                 Side cur = s;
-                for (int i=0; i<k; i++) {
-                    cur = cur==Side.NORTH?Side.EAST
-                            : cur==Side.EAST?Side.SOUTH
-                            : cur==Side.SOUTH?Side.WEST
-                            : Side.NORTH;
-                }
-                rotated.add(cur);
+                for (int i = 0; i < k; i++) cur = rotate90(cur);
+                rotSides.add(cur);
             }
-            if (rotated.equals(needs)) return k*90;
+            if (rotSides.equals(needs)) return k * 90;
         }
         return 0;
     }
 
-    /** Returns true if the given position is within the board boundaries. */
-    private boolean inBounds(Position p) {
-        return p.getRow()>=0 && p.getRow()<rows
-                && p.getCol()>=0 && p.getCol()<cols;
+    private Side rotate90(Side s) {
+        switch (s) {
+            case NORTH: return Side.EAST;
+            case EAST:  return Side.SOUTH;
+            case SOUTH: return Side.WEST;
+            default:    return Side.NORTH;
+        }
     }
 
-    /**
-     * Determines which Side (NORTH/SOUTH/EAST/WEST) separates two adjacent positions.
-     * @throws IllegalArgumentException if the positions are not adjacent.
-     */
+    private boolean inBounds(Position p) {
+        return p.getRow() >= 0 && p.getRow() < rows
+                && p.getCol() >= 0 && p.getCol() < cols;
+    }
+
     private Side sideBetween(Position a, Position b) {
-        if (b.getRow()==a.getRow()+1 && b.getCol()==a.getCol()) return Side.SOUTH;
-        if (b.getRow()==a.getRow()-1 && b.getCol()==a.getCol()) return Side.NORTH;
-        if (b.getCol()==a.getCol()+1 && b.getRow()==a.getRow()) return Side.EAST;
-        if (b.getCol()==a.getCol()-1 && b.getRow()==a.getRow()) return Side.WEST;
-        throw new IllegalArgumentException(a + " not adjacent to " + b);
+        if (b.getRow() == a.getRow() + 1 && b.getCol() == a.getCol()) return Side.SOUTH;
+        if (b.getRow() == a.getRow() - 1 && b.getCol() == a.getCol()) return Side.NORTH;
+        if (b.getCol() == a.getCol() + 1 && b.getRow() == a.getRow()) return Side.EAST;
+        if (b.getCol() == a.getCol() - 1 && b.getRow() == a.getRow()) return Side.WEST;
+        throw new IllegalArgumentException("Not adjacent: " + a + " & " + b);
     }
 }
