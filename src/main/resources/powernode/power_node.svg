@@ -6,19 +6,30 @@
   <rect width="100" height="100" rx="5" fill="#222"/>
 
   <defs>
-    <!-- neonový gradient těla -->
+    <!-- modrý gradient pro diamant -->
     <radialGradient id="powerGrad" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#33CCFF"/>
       <stop offset="100%" stop-color="#0066FF"/>
     </radialGradient>
 
-    <!-- neonový vnitřní drátek pro nožku -->
+    <!-- neonový vnitřní drátek pro diamant -->
     <radialGradient id="neonInner" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="50">
       <stop offset="0%" stop-color="#99DDFF"/>
       <stop offset="100%" stop-color="#66CCFF"/>
     </radialGradient>
 
-    <!-- gradient pro okraj diamantu -->
+    <!-- růžový gradient pro pin (vnější) -->
+    <radialGradient id="pinkBody" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF00FF"/>
+      <stop offset="100%" stop-color="#9F009F"/>
+    </radialGradient>
+    <!-- růžový gradient pro pin (vnitřní) -->
+    <radialGradient id="pinkInner" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="50">
+      <stop offset="0%" stop-color="#FF99FF"/>
+      <stop offset="100%" stop-color="#FF66FF"/>
+    </radialGradient>
+
+    <!-- glow filtr pro diamant -->
     <filter id="diamondGlow" x="-30%" y="-30%" width="160%" height="160%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
       <feComposite in="blur" in2="SourceAlpha" operator="out" result="glowOutline"/>
@@ -29,7 +40,6 @@
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-
     <!-- glow filtr pro pin -->
     <filter id="powerGlow" x="-200%" y="-200%" width="400%" height="400%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
@@ -40,18 +50,16 @@
     </filter>
   </defs>
 
-  <!-- vnější neonový tubus + glow (v modré barvě) - ZA diamantem -->
+  <!-- pin (vývod) růžový, ZA diamantem -->
   <rect x="45" y="80" width="10" height="20"
-        fill="url(#powerGrad)"
+        fill="url(#pinkBody)"
         filter="url(#powerGlow)"
         stroke-linecap="butt" stroke-linejoin="miter"/>
-
-  <!-- vnitřní neonová linka (gradient) - ZA diamantem -->
   <rect x="47" y="80" width="6" height="20"
-        fill="url(#neonInner)"
+        fill="url(#pinkInner)"
         stroke-linecap="butt" stroke-linejoin="miter"/>
 
-  <!-- diamantový krystal s glow efektem - PŘED nožkou -->
+  <!-- diamantový krystal s glow efektem - PŘED pinem -->
   <polygon points="50,15 85,50 50,85 15,50"
            fill="url(#powerGrad)"
            stroke="#33CCFF" stroke-width="2"
