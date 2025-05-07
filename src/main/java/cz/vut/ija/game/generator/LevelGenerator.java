@@ -2,6 +2,7 @@ package cz.vut.ija.game.generator;
 
 import cz.vut.ija.game.model.*;
 import java.util.*;
+import java.util.Collections;
 
 /**
  * LevelGenerator: generuje řešení podobné hře LightBulb:
@@ -240,6 +241,8 @@ public class LevelGenerator {
     }
 
     private void addTBias(Map<Position,Set<Side>> conn, Set<Position> bulbs) {
+        // Collect candidates for T-bias: straight segments not adjacent to bulbs
+        List<Position> candidates = new ArrayList<>();
         for (Position p : new ArrayList<>(conn.keySet())) {
             Set<Side> sides = conn.get(p);
             // pokud je uzel přímo sousedem žárovky, nepřidávej odbočku – zabráníme úniku
@@ -251,18 +254,25 @@ public class LevelGenerator {
             if (nextToBulb) continue;
             if (sides.size() == 2) {
                 Iterator<Side> it = sides.iterator(); Side a = it.next(), b = it.next();
-                if (a.opposite() == b && rnd.nextDouble() < T_BIAS) {
-                    for (Side s : Side.values()) {
-                        if (!sides.contains(s)) {
-                            Position np = p.step(s);
-                            if (inBounds(np)) {
-                                conn.get(p).add(s);
-                                conn.computeIfAbsent(np, k->new HashSet<>()).add(s.opposite());
-                                System.out.println("  T-bias: added branch at " + p + " towards " + np);
-                                break;
-                            }
-                        }
-                    }
+                if (a.opposite() == b) {
+                    candidates.add(p);
+                }
+            }
+        }
+        int desired = Math.max(0, bulbCount - 1);
+        Collections.shuffle(candidates, rnd);
+        System.out.println("Adding exactly " + desired + " T-branches for " + bulbCount + " bulbs");
+        for (int i = 0; i < Math.min(desired, candidates.size()); i++) {
+            Position p = candidates.get(i);
+            Set<Side> sides = conn.get(p);
+            // find any free direction to branch
+            for (Side s : Side.values()) {
+                if (!sides.contains(s) && inBounds(p.step(s))) {
+                    Position np = p.step(s);
+                    conn.get(p).add(s);
+                    conn.computeIfAbsent(np, k->new HashSet<>()).add(s.opposite());
+                    System.out.println("  T-branch: added at " + p + " towards " + np);
+                    break;
                 }
             }
         }
