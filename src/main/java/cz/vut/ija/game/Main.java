@@ -1,9 +1,14 @@
 package cz.vut.ija.game;
 
 import cz.vut.ija.game.controller.GameController;
+import cz.vut.ija.game.model.GameSave;
+import cz.vut.ija.game.service.GameSaveManager;
+import cz.vut.ija.game.service.GameSaveService;
 import cz.vut.ija.game.view.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import cz.vut.ija.game.generator.LevelGenerator;
 import cz.vut.ija.game.model.GameBoard;
@@ -13,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,8 +26,7 @@ import java.util.Objects;
  * Sets up the JavaFX stage, scene, and core UI elements
  * and delegates game logic and view management to GameController.
  */
-public class Main extends Application implements SettingsChangeListener
-{
+public class Main extends Application implements SettingsChangeListener {
 
     private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 1000;
@@ -30,15 +35,19 @@ public class Main extends Application implements SettingsChangeListener
     private BorderPane root;
 
     /**
-     * Holds the active GameController instance responsible for coordinating between the model and the view.
-     * Component MainMenuView serves as an entry point, and the settings view is used for setting up the game.
+     * Views
      */
-    private MainMenuView mainMenu;
+    private MainMenuView mainMenuView;
     private GameModeSelectView gameModeView;
     private DifficultySelectView difficultyView;
     private TimeSelectView timeSelectView;
     private CustomGameView customGameView;
+
+    /**
+     * Holds the active GameController instance responsible for coordinating between the model and the view.
+     */
     private GameController gameController;
+    private GameSaveManager saveManager;
     private Label moveLabel;
 
     // Default settings
@@ -86,7 +95,7 @@ public class Main extends Application implements SettingsChangeListener
      * Initialize all the components.
      */
     private void initializeComponents() {
-        mainMenu = new MainMenuView();
+        mainMenuView = new MainMenuView();
         gameModeView = new GameModeSelectView();
         gameModeView.setSettingsChangeListener(this);
         difficultyView = new DifficultySelectView();
@@ -101,9 +110,10 @@ public class Main extends Application implements SettingsChangeListener
      */
     private void setupEventHandlers() {
         // Main menu
-        mainMenu.getStartGameButton().setOnAction(e -> showGameModeSelect());
-        mainMenu.getCustomButton().setOnAction(e -> showSettings());
-        mainMenu.getExitButton().setOnAction(e -> Platform.exit());
+        mainMenuView.getStartGameButton().setOnAction(e -> showGameModeSelect());
+        mainMenuView.getReplayButton().setOnAction(e -> showSavedGames());
+        mainMenuView.getCustomButton().setOnAction(e -> showSettings());
+        mainMenuView.getExitButton().setOnAction(e -> Platform.exit());
 
         gameModeView.getBackButton().setOnAction(e -> showMainMenu());
 
@@ -123,7 +133,7 @@ public class Main extends Application implements SettingsChangeListener
     }
 
     private void showMainMenu() {
-        root.setCenter(mainMenu);
+        root.setCenter(mainMenuView);
     }
 
     private void showGameModeSelect() {
@@ -137,16 +147,105 @@ public class Main extends Application implements SettingsChangeListener
     private void showTimeSelect() {
         root.setCenter(timeSelectView);
     }
+
     private void showSettings() {
         customGameView.updateUI(boardSize, bulbCount, timedModeEnabled, timeLimit);
         root.setCenter(customGameView);
     }
 
+    private void showSavedGames() {
+        // Vytvořit/získat instanci GameSaveService
+        GameSaveService saveService = new GameSaveService();
+
+        // Získat seznam uložených her
+        List<GameSave> saves = saveService.getAllSaves();
+
+        if (saves.isEmpty()) {
+            // Pokud nejsou žádné uložené hry, zobrazit zprávu
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.INFORMATION);
+            alert.setTitle("No Saved Games");
+            alert.setHeaderText(null);
+            alert.setContentText("There are no saved games to replay.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Vytvořit a zobrazit view pro výběr uložené hry
+        LoadGameView loadGameView = new LoadGameView(saves);
+        loadGameView.setOnSaveSelected(save -> showReplay(save));
+        loadGameView.getBackButton().setOnAction(e -> showMainMenu());
+
+        root.setCenter(loadGameView);
+    }
+
+    private void showReplay(GameSave save) {
+        ReplayView replayView = new ReplayView(save);
+
+        // Nastavit callbacky
+        replayView.setOnPlayGameAtMove(moveIndex -> continueGameFromMove(save, moveIndex));
+        replayView.setOnBackToMenu(() -> showMainMenu());
+
+        root.setCenter(replayView);
+    }
+
+    private void continueGameFromMove(GameSave save, int moveIndex) {
+        // Vytvořit desku v požadovaném stavu
+        GameSaveService saveService = new GameSaveService();
+        GameBoard board = saveService.createBoardFromSave(save, moveIndex);
+
+        // Vytvořit herní kontroler
+        gameController = new GameController(board);
+
+        // Vytvořit nový GameSaveManager s původními údaji
+        saveManager = new GameSaveManager(board, save.getBoardSize(), save.getBulbCount());
+
+        // Nastavit saveManager do kontroleru
+        gameController.setSaveManager(saveManager);
+
+        // Zaznamenat všechny tahy až do moveIndex, protože pokračujeme v existující hře
+        List<GameSave.GameMove> movesToReplay = save.getMoves().subList(0, moveIndex + 1);
+        for (GameSave.GameMove move : movesToReplay) {
+            saveManager.recordMove(move.getRow(), move.getCol(), move.getOldRotation(), move.getNewRotation());
+        }
+
+        // Vytvořit a nastavit herní obrazovku
+        BorderPane gamePane = new BorderPane();
+        gamePane.setCenter(gameController.getView());
+
+        // Přidat tlačítko pro návrat do menu, které uloží hru
+        Button backToMenuButton = new Button("Back to Menu");
+        backToMenuButton.setOnAction(e -> {
+            if (saveManager != null) {
+                saveManager.saveGame(false); // Uložit jako nedokončenou
+            }
+            showMainMenu();
+        });
+
+        HBox bottomBar = new HBox(10, backToMenuButton);
+        bottomBar.setAlignment(Pos.CENTER);
+        bottomBar.setPadding(new Insets(10));
+
+        gamePane.setBottom(bottomBar);
+
+        // Přidat handler pro výhru, který označí hru jako dokončenou
+        gameController.getView().addEventHandler(GameWinEvent.GAME_WIN, e -> {
+            if (saveManager != null) {
+                saveManager.saveGame(true); // Uložit jako dokončenou
+            }
+            // Váš existující kód pro zobrazení výhry
+        });
+
+        // Zobrazit herní obrazovku
+        root.setCenter(gamePane);
+    }
+
+
     /**
      * Start a new game with predefined settings based on difficulty level
      */
     private void startGameWithDifficulty(String difficulty) {
-        switch(difficulty) {
+        switch (difficulty) {
             case "easy":
                 boardSize = "5×5";
                 bulbCount = 2;
@@ -203,7 +302,7 @@ public class Main extends Application implements SettingsChangeListener
         showTimeSelect();
     }
 
-        // Starts a new game
+    // Starts a new game
     private void startNewGame() {
         System.out.println("========== STARTING NEW GAME ==========");
         System.out.println("Board size: " + boardSize);
@@ -228,17 +327,26 @@ public class Main extends Application implements SettingsChangeListener
         // Initialize controller
         gameController = new GameController(puzzle);
 
+        saveManager = new GameSaveManager(puzzle, boardSize, bulbCount);
+        gameController.setSaveManager(saveManager);
+
         // Set up a new pane
         BorderPane gamePane = new BorderPane();
         gamePane.setCenter(gameController.getView());
         // Handle game win event
         gameController.getView().addEventHandler(
-            cz.vut.ija.game.view.GameWinEvent.GAME_WIN,
-            e -> showMainMenu()
+                cz.vut.ija.game.view.GameWinEvent.GAME_WIN,
+                e -> showMainMenu()
         );
 
         Button backToMenuButton = new Button("Back to main menu");
-        backToMenuButton.setOnAction(e -> showMainMenu());
+        backToMenuButton.setOnAction(event -> {
+                System.out.println("Saving game...");
+            if (saveManager != null) {
+                saveManager.saveGame(false); // Uložit rozehranou hru
+            }
+            showMainMenu(); // Zobrazit hlavní menu
+        });
 
         HBox bottomBar = new HBox(backToMenuButton);
         bottomBar.setAlignment(javafx.geometry.Pos.CENTER);

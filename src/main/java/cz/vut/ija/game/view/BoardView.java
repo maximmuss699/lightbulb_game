@@ -284,7 +284,7 @@ public class BoardView extends GridPane implements BoardObserver {
         alert.setContentText("Click OK to return to the main menu.");
         alert.showAndWait();
 
-        // Trigger return to main menu
+        // Trigger return to the main menu
         fireEvent(new GameWinEvent());
     }
 }

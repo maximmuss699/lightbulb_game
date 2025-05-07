@@ -14,6 +14,7 @@ import javafx.scene.text.FontWeight;
 public class MainMenuView extends VBox {
 
     private final Button startGameButton;
+    private Button replayButton;
     private final Button customButton;
     private final Button exitButton;
 
@@ -33,6 +34,11 @@ public class MainMenuView extends VBox {
         startGameButton.getStyleClass().add("menu-button");
         startGameButton.setPrefWidth(200);
 
+        // replay button
+        replayButton = new Button("Replay Games");
+        replayButton.getStyleClass().add("menu-button");
+        replayButton.setPrefWidth(200);
+
         // Custom settings button
         customButton = new Button("Custom game");
         customButton.getStyleClass().add("menu-button");
@@ -47,6 +53,7 @@ public class MainMenuView extends VBox {
         getChildren().addAll(
                 titleLabel,
                 startGameButton,
+                replayButton,
                 customButton,
                 exitButton
         );
@@ -54,6 +61,10 @@ public class MainMenuView extends VBox {
 
     public Button getStartGameButton() {
         return startGameButton;
+    }
+
+    public Button getReplayButton() {
+        return replayButton;
     }
 
     public Button getCustomButton() {

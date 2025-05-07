@@ -69,6 +69,45 @@ public class GameBoard {
         tiles[row][col].setRotation(rotation);
         notifyObservers(row, col);
     }
+    
+    public void setTileType(int row, int col, String type) {
+        int originalRotation = tiles[row][col].getRotation();
+
+        Tile newTile;
+        switch (type) {
+            case "S":
+                newTile = new SourceTile();
+                break;
+            case "B":
+                newTile = new BulbTile();
+                break;
+            case "I":
+                newTile = new WireTile();
+                break;
+            case "L":
+                newTile = new LTile();
+                break;
+            case "T":
+                newTile = new TTile();
+                break;
+            case "X":
+                newTile = new XTile();
+                break;
+            default:
+                newTile = new WireTile();
+                break;
+        }
+
+        // Nastavení původní rotace
+        newTile.setRotation(originalRotation);
+
+        // Nahrazení dlaždice v poli
+        tiles[row][col] = newTile;
+
+        // Notifikace pozorovatelů
+        notifyObservers(row, col);
+    }
+
 
     public void addObserver(BoardObserver o) {
         observers.add(o);

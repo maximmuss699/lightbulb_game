@@ -1,10 +1,12 @@
 package cz.vut.ija.game.controller;
 
 import cz.vut.ija.game.model.GameBoard;
+import cz.vut.ija.game.service.GameSaveManager;
 import cz.vut.ija.game.view.BoardView;
 import cz.vut.ija.game.view.TileClickEvent;
 import cz.vut.ija.game.command.Command;
 import cz.vut.ija.game.command.RotateCommand;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -20,24 +22,32 @@ public class GameController {
     private final Deque<Command> redoStack = new ArrayDeque<>();
     private int moveCount = 0;
 
+    // for saving game state
+    private GameSaveManager saveManager;
+
     /**
      * Listener for move count updates.
      */
     public interface MoveListener {
         void onMove(int newCount);
     }
+
     private MoveListener moveListener;
 
-    /** Constructs a controller for a board of the given size. */
+    /**
+     * Constructs a controller for a board of the given size.
+     */
     public GameController(int rows, int cols) {
         this(new GameBoard(rows, cols));
     }
 
-    /** Constructs a controller for an existing GameBoard. */
+    /**
+     * Constructs a controller for an existing GameBoard.
+     */
     public GameController(GameBoard board) {
         // Initialize model and view
         this.model = board;
-        this.view  = new BoardView(model);
+        this.view = new BoardView(model);
         // Wire up event handling
         registerHandlers();
     }
@@ -47,15 +57,25 @@ public class GameController {
      */
     private void registerHandlers() {
         view.addEventHandler(TileClickEvent.TILE_CLICK, evt -> {
+            int row = evt.getRow();
+            int col = evt.getCol();
+            int oldRotation = model.getTile(row, col).getRotation();
+
             // Create, execute, and record a RotateCommand
             Command cmd = new RotateCommand(model, evt.getRow(), evt.getCol());
             cmd.execute();
             undoStack.push(cmd);
             redoStack.clear();
+
             // Update move count and notify listener
             moveCount++;
             if (moveListener != null) {
                 moveListener.onMove(moveCount);
+            }
+
+            int newRotation = model.getTile(row, col).getRotation();
+            if (saveManager != null) {
+                saveManager.recordMove(row, col, oldRotation, newRotation);
             }
         });
     }
@@ -103,4 +123,9 @@ public class GameController {
             }
         }
     }
+
+    public void setSaveManager(GameSaveManager saveManager) {
+        this.saveManager = saveManager;
+    }
+
 }
