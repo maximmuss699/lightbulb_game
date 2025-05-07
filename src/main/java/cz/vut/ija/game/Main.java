@@ -97,18 +97,18 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
     private void setupEventHandlers() {
         // Main menu
         mainMenu.getStartGameButton().setOnAction(e -> showDifficultySelect());
+        mainMenu.getCustomButton().setOnAction(e -> showSettings());
         mainMenu.getExitButton().setOnAction(e -> Platform.exit());
 
         // Difficulty select screen
         difficultyView.getEasyButton().setOnAction(e -> startGameWithDifficulty("easy"));
         difficultyView.getMediumButton().setOnAction(e -> startGameWithDifficulty("medium"));
         difficultyView.getHardButton().setOnAction(e -> startGameWithDifficulty("hard"));
-        difficultyView.getCustomButton().setOnAction(e -> showSettings());
         difficultyView.getBackButton().setOnAction(e -> showMainMenu());
 
         // Custom settings
         settingsView.getStartGameButton().setOnAction(e -> startNewGame());
-        settingsView.getBackButton().setOnAction(e -> showDifficultySelect());
+        settingsView.getBackButton().setOnAction(e -> showMainMenu());
     }
 
     private void showMainMenu() {

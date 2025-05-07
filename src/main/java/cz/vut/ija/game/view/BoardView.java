@@ -25,6 +25,7 @@ public class BoardView extends GridPane implements BoardObserver {
     private static final int TILE_SIZE = 80;
 
     // Images for wires
+    private final Image empty_tile = new Image(getClass().getResourceAsStream("/emptytile/empty_tile.png"));
     private final Image wireI_lit = new Image(getClass().getResourceAsStream("/wires/I_lit.png"));
     private final Image wireI_unlit = new Image(getClass().getResourceAsStream("/wires/I_unlit.png"));
     private final Image wireL_lit = new Image(getClass().getResourceAsStream("/wires/L_lit.png"));
@@ -143,7 +144,7 @@ public class BoardView extends GridPane implements BoardObserver {
                 imageView.setImage(powered ? lightbulb_lit : lightbulb_unlit);
                 break;
             default:
-                imageView.setImage(wireI_unlit);
+                imageView.setImage(empty_tile);
         }
 
         // rotate accordingly

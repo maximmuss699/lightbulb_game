@@ -19,7 +19,6 @@ public class DifficultySelectView extends VBox {
     private final Button easyButton;
     private final Button mediumButton;
     private final Button hardButton;
-    private final Button customButton;
     private final Button backButton;
 
     public DifficultySelectView() {
@@ -51,11 +50,6 @@ public class DifficultySelectView extends VBox {
         // Mezera místo separátoru
         Region spacer = new Region();
         spacer.setPrefHeight(25); // Nastavení výšky mezery
-
-        // Custom settings button
-        customButton = new Button("CUSTOM");
-        customButton.getStyleClass().add("menu-button");
-        customButton.setPrefWidth(200);
         
         // Back button
         backButton = new Button("BACK");
@@ -69,7 +63,6 @@ public class DifficultySelectView extends VBox {
                 mediumButton,
                 hardButton,
                 spacer,
-                customButton,
                 backButton
         );
     }
@@ -78,6 +71,5 @@ public class DifficultySelectView extends VBox {
     public Button getEasyButton() { return easyButton; }
     public Button getMediumButton() { return mediumButton; }
     public Button getHardButton() { return hardButton; }
-    public Button getCustomButton() { return customButton; }
     public Button getBackButton() { return backButton; }
 }
