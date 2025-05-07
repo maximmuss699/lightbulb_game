@@ -20,6 +20,7 @@ public class BoardView extends GridPane implements BoardObserver {
     private final GameSimulator simulator;
     private final StackPane[][] tilePanes;
     private final ImageView[][] tileImages;
+    private final Button solveButton;
 
     private static final int TILE_SIZE = 80;
 
@@ -68,6 +69,12 @@ public class BoardView extends GridPane implements BoardObserver {
         // Determine initial powered state and style tiles
         simulator.propagate();
         applyPowerStyles();
+
+        // add Solve button
+        solveButton = new Button("Solve");
+        solveButton.setOnAction(e -> autoSolve());
+        // place below the grid: span across all columns
+        this.add(solveButton, 0, model.getRows(), model.getCols(), 1);
     }
 
     private void buildGrid() {
@@ -191,5 +198,18 @@ public class BoardView extends GridPane implements BoardObserver {
                 updateTileImage(tileImages[r][c], tile, powered);
             }
         }
+    }
+
+    /** Rotate all tiles to their solution rotations and refresh view. */
+    private void autoSolve() {
+        int[][] sol = model.getSolutionRotations();
+        if (sol == null) return;
+        for (int r = 0; r < sol.length; r++) {
+            for (int c = 0; c < sol[r].length; c++) {
+                model.setTileRotation(r, c, sol[r][c]);
+            }
+        }
+        simulator.propagate();
+        applyPowerStyles();
     }
 }

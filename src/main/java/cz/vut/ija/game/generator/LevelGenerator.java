@@ -59,6 +59,14 @@ public class LevelGenerator {
         }
         System.out.println("Tree generation complete. Building GameBoard and scrambling rotations.");
         GameBoard board = new GameBoard(solution);
+        // Before scramble loop, record solution rotations
+        int[][] solRots = new int[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                solRots[r][c] = solution[r][c].getRotation();
+            }
+        }
+        board.setSolutionRotations(solRots);
         // Zamícháme rotace dílků
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {

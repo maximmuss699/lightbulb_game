@@ -14,6 +14,9 @@ public class GameBoard {
     private final Tile[][] tiles;
     private final List<BoardObserver> observers = new ArrayList<>();
 
+    // Stores the correct rotations for auto-solve
+    private int[][] solutionRotations;
+
     /** Public constructor: initialize every cell to a default WireTile */
     public GameBoard(int rows, int cols) {
         this.rows = rows; this.cols = cols;
@@ -36,6 +39,16 @@ public class GameBoard {
                 throw new IllegalArgumentException("Jagged initial row");
             System.arraycopy(initial[r], 0, tiles[r], 0, cols);
         }
+    }
+
+    /** Store the solved rotations before scrambling. */
+    public void setSolutionRotations(int[][] sol) {
+        this.solutionRotations = sol;
+    }
+
+    /** Retrieve the stored solved rotations. */
+    public int[][] getSolutionRotations() {
+        return solutionRotations;
     }
 
     public int getRows() { return rows; }
