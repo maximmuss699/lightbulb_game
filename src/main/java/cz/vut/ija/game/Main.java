@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 import java.util.List;
 import java.util.Objects;
 
+import static cz.vut.ija.game.view.GameWinEvent.GAME_WIN;
+
 /**
  * Main application class for the LightBulb Puzzle Game.
  * Sets up the JavaFX stage, scene, and core UI elements
@@ -229,7 +231,7 @@ public class Main extends Application implements SettingsChangeListener {
         gamePane.setBottom(bottomBar);
 
         // Přidat handler pro výhru, který označí hru jako dokončenou
-        gameController.getView().addEventHandler(GameWinEvent.GAME_WIN, e -> {
+        gameController.getView().addEventHandler(GAME_WIN, e -> {
             if (saveManager != null) {
                 saveManager.saveGame(true); // Uložit jako dokončenou
             }
@@ -334,14 +336,15 @@ public class Main extends Application implements SettingsChangeListener {
         BorderPane gamePane = new BorderPane();
         gamePane.setCenter(gameController.getView());
         // Handle game win event
-        gameController.getView().addEventHandler(
-                cz.vut.ija.game.view.GameWinEvent.GAME_WIN,
-                e -> showMainMenu()
-        );
+        gameController.getView().addEventHandler(GAME_WIN, e -> {
+            if (saveManager != null) {
+                saveManager.saveGame(true); // Uložit jako dokončenou
+            }
+            showMainMenu();
+        });
 
         Button backToMenuButton = new Button("Back to main menu");
         backToMenuButton.setOnAction(event -> {
-                System.out.println("Saving game...");
             if (saveManager != null) {
                 saveManager.saveGame(false); // Uložit rozehranou hru
             }
