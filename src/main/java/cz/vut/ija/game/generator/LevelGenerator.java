@@ -14,7 +14,7 @@ import java.util.*;
  * Všechny kroky generování jsou zalogovány v konzoli.
  */
 public class LevelGenerator {
-    private static final double T_BIAS = 0.4;
+    private static final double T_BIAS = 0.2;
     private final int rows, cols, bulbCount;
     private final Random rnd = new Random();
 
@@ -60,23 +60,37 @@ public class LevelGenerator {
             System.out.println("Warning: only " + visited.size() + " out of " + (rows*cols) + " cells are connected!");
         }
 
-        // 2) Nalezení listů (stupeň 1) s výjimkou startu
-        List<Position> leaves = new ArrayList<>();
+        // 2) Nalezení listů (stupeň 1) s výjimkou startu -------------
+        List<Position> allLeaves   = new ArrayList<>();
+        List<Position> closeLeaves = new ArrayList<>();   // Manhattan ≤1
         for (Position p : conn.keySet()) {
-            int deg = conn.get(p).size();
-            if (deg == 1 && !p.equals(start)) leaves.add(p);
+            if (p.equals(start)) continue;
+            if (conn.get(p).size() == 1) {
+                int dist = Math.abs(p.getRow() - start.getRow()) + Math.abs(p.getCol() - start.getCol());
+                if (dist <= 1) closeLeaves.add(p);
+                else           allLeaves.add(p);
+            }
         }
-        System.out.println("Found leaves (potential bulbs): " + leaves);
-        // Odstranění listů v manhattanském dosahu ≤1 od startu.
-        leaves.removeIf(p -> Math.abs(p.getRow() - start.getRow()) + Math.abs(p.getCol() - start.getCol()) <= 1);
-        System.out.println("Filtered leaves (outside radius): " + leaves);
-        if (leaves.size() < bulbCount) {
-            System.out.println("Warning: leaves.size() < bulbCount, adjusting selection.");
-        }
+        System.out.println("Far leaves   : " + allLeaves);
+        System.out.println("Close leaves : " + closeLeaves);
 
-        // 3) Výběr pozic žárovek
-        Collections.shuffle(leaves, rnd);
-        Set<Position> bulbs = new LinkedHashSet<>(leaves.subList(0, Math.min(bulbCount, leaves.size())));
+        // 3) Výběr přesně bulbCount pozic -----------------------------
+        List<Position> pool = new ArrayList<>(allLeaves);
+        Collections.shuffle(pool, rnd);
+        while (pool.size() < bulbCount && !closeLeaves.isEmpty()) {
+            // doplň z blízkých listů, pokud nestačí vzdálené
+            pool.add(closeLeaves.remove(rnd.nextInt(closeLeaves.size())));
+        }
+        if (pool.size() < bulbCount) {
+            // v krajním případě doplň libovolné ne‐zdrojové buňky (není ideální, ale zaručí počet)
+            for (Position p : conn.keySet()) {
+                if (p.equals(start) || pool.contains(p)) continue;
+                pool.add(p);
+                if (pool.size() == bulbCount) break;
+            }
+        }
+        Collections.shuffle(pool, rnd);
+        Set<Position> bulbs = new LinkedHashSet<>(pool.subList(0, bulbCount));
         System.out.println("Selected bulb positions: " + bulbs);
         // Проверка: все ли лампочки достижимы из построенного дерева
         Set<Position> reach = new HashSet<>();
@@ -125,7 +139,7 @@ public class LevelGenerator {
 
         // 4) Přidání T-bias (změna některých I na T)
         System.out.println("Applying T-bias (" + T_BIAS + ") to straight segments...");
-        addTBias(conn);
+        addTBias(conn, bulbs);
         System.out.println("T-bias applied.");
 
         // 5) Sestavení matice dílků
@@ -169,9 +183,16 @@ public class LevelGenerator {
         }
     }
 
-    private void addTBias(Map<Position,Set<Side>> conn) {
+    private void addTBias(Map<Position,Set<Side>> conn, Set<Position> bulbs) {
         for (Position p : new ArrayList<>(conn.keySet())) {
             Set<Side> sides = conn.get(p);
+            // pokud je uzel přímo sousedem žárovky, nepřidávej odbočku – zabráníme úniku
+            boolean nextToBulb = false;
+            for (Side sNeighbour : sides) {
+                Position neighbour = p.step(sNeighbour);
+                if (bulbs.contains(neighbour)) { nextToBulb = true; break; }
+            }
+            if (nextToBulb) continue;
             if (sides.size() == 2) {
                 Iterator<Side> it = sides.iterator(); Side a = it.next(), b = it.next();
                 if (a.opposite() == b && rnd.nextDouble() < T_BIAS) {
