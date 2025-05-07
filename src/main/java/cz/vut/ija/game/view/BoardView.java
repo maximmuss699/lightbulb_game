@@ -76,6 +76,10 @@ public class BoardView extends GridPane implements BoardObserver {
         solveButton.setOnAction(e -> autoSolve());
         // place below the grid: span across all columns
         this.add(solveButton, 0, model.getRows(), model.getCols(), 1);
+
+        Button hintButton = new Button("Show Hints");
+        hintButton.setOnAction(e -> showHintOverlay());
+        this.add(hintButton, 0, model.getRows() + 1, model.getCols(), 1);
     }
 
     private void buildGrid() {
@@ -177,6 +181,7 @@ public class BoardView extends GridPane implements BoardObserver {
         // recalculate the powered state
         simulator.propagate();
         applyPowerStyles();
+        checkVictory();
     }
 
     private void applyRotation(Button btn, Tile tile) {
@@ -214,5 +219,72 @@ public class BoardView extends GridPane implements BoardObserver {
         }
         simulator.propagate();
         applyPowerStyles();
+    }
+
+    /** Show overlay with number of rotations needed for each tile. */
+    public void showHintOverlay() {
+        int[][] solutionRotations = model.getSolutionRotations();
+        if (solutionRotations == null) return;
+
+        for (int r = 0; r < model.getRows(); r++) {
+            for (int c = 0; c < model.getCols(); c++) {
+                Tile tile = model.getTile(r, c);
+                int current = tile.getRotation();
+                int target = solutionRotations[r][c];
+                int diff = (target - current + 360) % 360;
+                int numClicks = diff / 90;
+
+                if (isSameOrientation(tile, current, target)) {
+                    numClicks = 0;
+                }
+
+                StackPane pane = tilePanes[r][c];
+
+                pane.getChildren().removeIf(node ->
+                        "hint-label".equals(node.getUserData()) ||
+                                (node instanceof StackPane && "hint-label".equals(((StackPane) node).getChildren().get(0).getUserData()))
+                );
+                javafx.scene.text.Text hint = new javafx.scene.text.Text("↻" + numClicks);
+                hint.setStyle("-fx-font-size: 14px; -fx-fill: red;");
+                hint.setUserData("hint-label");
+
+                StackPane hintWrapper = new StackPane(hint);
+                hintWrapper.setAlignment(Pos.TOP_RIGHT);
+
+                pane.getChildren().add(hintWrapper);
+            }
+        }
+    }
+
+    private boolean isSameOrientation(Tile tile, int current, int target) {
+        String type = tile.getType();
+        switch (type) {
+            case "I":
+                return (current % 180) == (target % 180);
+            case "X":
+                return true;
+            default:
+                return current == target;
+        }
+    }
+
+    private void checkVictory() {
+        for (int r = 0; r < model.getRows(); r++) {
+            for (int c = 0; c < model.getCols(); c++) {
+                Tile tile = model.getTile(r, c);
+                if ("B".equals(tile.getType()) && !simulator.isPowered(r, c)) {
+                    return; // хотя бы одна лампа не подключена
+                }
+            }
+        }
+
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        alert.setTitle("Victory!");
+        alert.setHeaderText("🎉 All bulbs are lit. Puzzle solved!");
+        alert.setContentText("Click OK to return to the main menu.");
+        alert.showAndWait();
+
+        // Trigger return to main menu
+        fireEvent(new GameWinEvent());
     }
 }

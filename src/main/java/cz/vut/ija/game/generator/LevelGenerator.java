@@ -49,11 +49,11 @@ public class LevelGenerator {
                 System.out.println("Mismatch T-branches, regenerating...");
             }
         } while (attempt < 20 &&
-                 // retry if count mismatch
-                 Arrays.stream(solution)
-                       .flatMap(Arrays::stream)
-                       .filter(t -> t.getType().equals("T"))
-                       .count() != desiredT);
+                // retry if count mismatch
+                Arrays.stream(solution)
+                        .flatMap(Arrays::stream)
+                        .filter(t -> t.getType().equals("T"))
+                        .count() != desiredT);
         if (Arrays.stream(solution).flatMap(Arrays::stream).filter(t -> t.getType().equals("T")).count() != desiredT) {
             throw new IllegalStateException("Unable to generate solution with exact T-branches");
         }
@@ -254,8 +254,8 @@ public class LevelGenerator {
             System.out.println("SUCCESS: ALL BULBS CONNECTED");
         } else {
             System.out.println("FAILURE: BULBS NOT ALL CONNECTED: " + bulbs.stream()
-                .filter(b -> !checkReach.contains(b))
-                .toList());
+                    .filter(b -> !checkReach.contains(b))
+                    .toList());
         }
 
         // 5) Sestavení matice dílků
