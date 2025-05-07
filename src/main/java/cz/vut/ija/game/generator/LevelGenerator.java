@@ -142,6 +142,62 @@ public class LevelGenerator {
         addTBias(conn, bulbs);
         System.out.println("T-bias applied.");
 
+        // --- Prune dead-end branches not leading to any bulb ---
+        System.out.println("Pruning dead-end branches not leading to bulbs...");
+        boolean removed;
+        do {
+            removed = false;
+            for (Position p : new ArrayList<>(conn.keySet())) {
+                Set<Side> sides = conn.get(p);
+                // dead end: not a bulb, not the source, degree == 1
+                if (!bulbs.contains(p) && !p.equals(start) && sides.size() == 1) {
+                    Side s = sides.iterator().next();
+                    Position np = p.step(s);
+                    sides.remove(s);
+                    conn.getOrDefault(np, Collections.emptySet()).remove(s.opposite());
+                    removed = true;
+                }
+            }
+        } while (removed);
+        System.out.println("Pruning complete.");
+
+        // --- Optimize: remove unnecessary T-branches ---
+        System.out.println("Optimizing to remove unnecessary T-branches...");
+        for (Position p : new ArrayList<>(conn.keySet())) {
+            Set<Side> sides = conn.get(p);
+            if (sides.size() >= 3) {
+                // attempt to remove each side if it's not needed
+                for (Side s : new ArrayList<>(sides)) {
+                    // Temporarily remove branch
+                    sides.remove(s);
+                    Position np = p.step(s);
+                    conn.getOrDefault(np, Collections.emptySet()).remove(s.opposite());
+                    // Check connectivity from source to all bulbs
+                    Set<Position> reach2 = new HashSet<>();
+                    Deque<Position> dq2 = new ArrayDeque<>();
+                    reach2.add(start); dq2.add(start);
+                    while (!dq2.isEmpty()) {
+                        Position cur = dq2.poll();
+                        for (Side ss : conn.getOrDefault(cur, Collections.emptySet())) {
+                            Position nxt = cur.step(ss);
+                            if (!reach2.contains(nxt)) {
+                                reach2.add(nxt);
+                                dq2.add(nxt);
+                            }
+                        }
+                    }
+                    if (!reach2.containsAll(bulbs)) {
+                        // revert removal if any bulb becomes unreachable
+                        sides.add(s);
+                        conn.computeIfAbsent(np, k -> new HashSet<>()).add(s.opposite());
+                    } else {
+                        System.out.println("Removed unnecessary branch at " + p + " towards " + np);
+                    }
+                }
+            }
+        }
+        System.out.println("Optimization complete.");
+
         // 5) Sestavení matice dílků
         System.out.println("Building tile matrix...");
         Tile[][] tiles = new Tile[rows][cols];
