@@ -2,6 +2,9 @@ package cz.vut.ija.game.generator;
 
 import cz.vut.ija.game.model.*;
 import java.util.*;
+import java.util.Collections;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 
 /**
  * LevelGenerator: generuje řešení podobné hře LightBulb:
@@ -26,10 +29,44 @@ public class LevelGenerator {
     }
 
     public GameBoard generatePuzzle() {
-        System.out.println("=== GENERATING PUZZLE ===");
-        Tile[][] solution = generateSolutionTiles();
+        int desiredT = Math.max(0, bulbCount - 1);
+        Tile[][] solution;
+        int attempt = 0;
+        do {
+            attempt++;
+            System.out.println("=== GENERATING PUZZLE, ATTEMPT #" + attempt + " ===");
+            solution = generateSolutionTiles();
+            // Count T-branches in solution
+            int tCount = 0;
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    Tile t = solution[r][c];
+                    if ("T".equals(t.getType())) tCount++;
+                }
+            }
+            System.out.println("T-branches: " + tCount + ", desired: " + desiredT);
+            if (tCount != desiredT) {
+                System.out.println("Mismatch T-branches, regenerating...");
+            }
+        } while (attempt < 20 &&
+                 // retry if count mismatch
+                 Arrays.stream(solution)
+                       .flatMap(Arrays::stream)
+                       .filter(t -> t.getType().equals("T"))
+                       .count() != desiredT);
+        if (Arrays.stream(solution).flatMap(Arrays::stream).filter(t -> t.getType().equals("T")).count() != desiredT) {
+            throw new IllegalStateException("Unable to generate solution with exact T-branches");
+        }
         System.out.println("Tree generation complete. Building GameBoard and scrambling rotations.");
         GameBoard board = new GameBoard(solution);
+        // Before scramble loop, record solution rotations
+        int[][] solRots = new int[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                solRots[r][c] = solution[r][c].getRotation();
+            }
+        }
+        board.setSolutionRotations(solRots);
         // Zamícháme rotace dílků
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -142,6 +179,85 @@ public class LevelGenerator {
         addTBias(conn, bulbs);
         System.out.println("T-bias applied.");
 
+        // --- Prune dead-end branches not leading to any bulb ---
+        System.out.println("Pruning dead-end branches not leading to bulbs...");
+        boolean removed;
+        do {
+            removed = false;
+            for (Position p : new ArrayList<>(conn.keySet())) {
+                Set<Side> sides = conn.get(p);
+                // dead end: not a bulb, not the source, degree == 1
+                if (!bulbs.contains(p) && !p.equals(start) && sides.size() == 1) {
+                    Side s = sides.iterator().next();
+                    Position np = p.step(s);
+                    sides.remove(s);
+                    conn.getOrDefault(np, Collections.emptySet()).remove(s.opposite());
+                    removed = true;
+                }
+            }
+        } while (removed);
+        System.out.println("Pruning complete.");
+
+        // --- Optimize: remove unnecessary T-branches ---
+        System.out.println("Optimizing to remove unnecessary T-branches...");
+        for (Position p : new ArrayList<>(conn.keySet())) {
+            Set<Side> sides = conn.get(p);
+            if (sides.size() >= 3) {
+                // attempt to remove each side if it's not needed
+                for (Side s : new ArrayList<>(sides)) {
+                    // Temporarily remove branch
+                    sides.remove(s);
+                    Position np = p.step(s);
+                    conn.getOrDefault(np, Collections.emptySet()).remove(s.opposite());
+                    // Check connectivity from source to all bulbs
+                    Set<Position> reach2 = new HashSet<>();
+                    Deque<Position> dq2 = new ArrayDeque<>();
+                    reach2.add(start); dq2.add(start);
+                    while (!dq2.isEmpty()) {
+                        Position cur = dq2.poll();
+                        for (Side ss : conn.getOrDefault(cur, Collections.emptySet())) {
+                            Position nxt = cur.step(ss);
+                            if (!reach2.contains(nxt)) {
+                                reach2.add(nxt);
+                                dq2.add(nxt);
+                            }
+                        }
+                    }
+                    if (!reach2.containsAll(bulbs)) {
+                        // revert removal if any bulb becomes unreachable
+                        sides.add(s);
+                        conn.computeIfAbsent(np, k -> new HashSet<>()).add(s.opposite());
+                    } else {
+                        System.out.println("Removed unnecessary branch at " + p + " towards " + np);
+                    }
+                }
+            }
+        }
+        System.out.println("Optimization complete.");
+
+        // FINAL CONNECTIVITY CHECK
+        Set<Position> checkReach = new HashSet<>();
+        Deque<Position> checkQueue = new ArrayDeque<>();
+        checkReach.add(start);
+        checkQueue.add(start);
+        while (!checkQueue.isEmpty()) {
+            Position cur = checkQueue.poll();
+            for (Side s : conn.getOrDefault(cur, Collections.emptySet())) {
+                Position nxt = cur.step(s);
+                if (!checkReach.contains(nxt)) {
+                    checkReach.add(nxt);
+                    checkQueue.add(nxt);
+                }
+            }
+        }
+        if (checkReach.containsAll(bulbs)) {
+            System.out.println("SUCCESS: ALL BULBS CONNECTED");
+        } else {
+            System.out.println("FAILURE: BULBS NOT ALL CONNECTED: " + bulbs.stream()
+                .filter(b -> !checkReach.contains(b))
+                .toList());
+        }
+
         // 5) Sestavení matice dílků
         System.out.println("Building tile matrix...");
         Tile[][] tiles = new Tile[rows][cols];
@@ -184,6 +300,8 @@ public class LevelGenerator {
     }
 
     private void addTBias(Map<Position,Set<Side>> conn, Set<Position> bulbs) {
+        // Collect candidates for T-bias: straight segments not adjacent to bulbs
+        List<Position> candidates = new ArrayList<>();
         for (Position p : new ArrayList<>(conn.keySet())) {
             Set<Side> sides = conn.get(p);
             // pokud je uzel přímo sousedem žárovky, nepřidávej odbočku – zabráníme úniku
@@ -195,18 +313,25 @@ public class LevelGenerator {
             if (nextToBulb) continue;
             if (sides.size() == 2) {
                 Iterator<Side> it = sides.iterator(); Side a = it.next(), b = it.next();
-                if (a.opposite() == b && rnd.nextDouble() < T_BIAS) {
-                    for (Side s : Side.values()) {
-                        if (!sides.contains(s)) {
-                            Position np = p.step(s);
-                            if (inBounds(np)) {
-                                conn.get(p).add(s);
-                                conn.computeIfAbsent(np, k->new HashSet<>()).add(s.opposite());
-                                System.out.println("  T-bias: added branch at " + p + " towards " + np);
-                                break;
-                            }
-                        }
-                    }
+                if (a.opposite() == b) {
+                    candidates.add(p);
+                }
+            }
+        }
+        int desired = Math.max(0, bulbCount - 1);
+        Collections.shuffle(candidates, rnd);
+        System.out.println("Adding exactly " + desired + " T-branches for " + bulbCount + " bulbs");
+        for (int i = 0; i < Math.min(desired, candidates.size()); i++) {
+            Position p = candidates.get(i);
+            Set<Side> sides = conn.get(p);
+            // find any free direction to branch
+            for (Side s : Side.values()) {
+                if (!sides.contains(s) && inBounds(p.step(s))) {
+                    Position np = p.step(s);
+                    conn.get(p).add(s);
+                    conn.computeIfAbsent(np, k->new HashSet<>()).add(s.opposite());
+                    System.out.println("  T-branch: added at " + p + " towards " + np);
+                    break;
                 }
             }
         }
