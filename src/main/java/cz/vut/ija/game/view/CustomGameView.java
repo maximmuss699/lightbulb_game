@@ -27,12 +27,6 @@ public class CustomGameView extends VBox {
 
 
     // Interface for checking changed options in settings
-    public interface SettingsChangeListener {
-        void onSizeChanged(String newSize);
-        void onBulbCountChanged(int newCount);
-        void onTimedModeChanged(boolean enabled, int timeLimit);
-        void onTimeLimitChanged(int newTimeLimit);
-    }
 
     private SettingsChangeListener changeListener;
 
@@ -99,7 +93,7 @@ public class CustomGameView extends VBox {
         timedModeCheckbox.selectedProperty().addListener((obs, oldVal, newVal) -> {
             timeSelector.setDisable(!newVal);
             if (changeListener != null) {
-                changeListener.onTimedModeChanged(newVal, timeSelector.getValue());
+                changeListener.onTimedModeChanged(newVal);
             }
         });
 

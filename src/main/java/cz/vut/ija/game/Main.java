@@ -1,9 +1,7 @@
 package cz.vut.ija.game;
 
 import cz.vut.ija.game.controller.GameController;
-import cz.vut.ija.game.view.DifficultySelectView;
-import cz.vut.ija.game.view.CustomGameView;
-import cz.vut.ija.game.view.MainMenuView;
+import cz.vut.ija.game.view.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -22,7 +20,8 @@ import java.util.Objects;
  * Sets up the JavaFX stage, scene, and core UI elements
  * and delegates game logic and view management to GameController.
  */
-public class Main extends Application implements CustomGameView.SettingsChangeListener {
+public class Main extends Application implements SettingsChangeListener
+{
 
     private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 1000;
@@ -35,8 +34,10 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
      * Component MainMenuView serves as an entry point, and the settings view is used for setting up the game.
      */
     private MainMenuView mainMenu;
+    private GameModeSelectView gameModeView;
     private DifficultySelectView difficultyView;
-    private CustomGameView settingsView;
+    private TimeSelectView timeSelectView;
+    private CustomGameView customGameView;
     private GameController gameController;
     private Label moveLabel;
 
@@ -86,9 +87,13 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
      */
     private void initializeComponents() {
         mainMenu = new MainMenuView();
+        gameModeView = new GameModeSelectView();
+        gameModeView.setSettingsChangeListener(this);
         difficultyView = new DifficultySelectView();
-        settingsView = new CustomGameView();
-        settingsView.setSettingsChangeListener(this);
+        timeSelectView = new TimeSelectView();
+        timeSelectView.setSettingsChangeListener(this);
+        customGameView = new CustomGameView();
+        customGameView.setSettingsChangeListener(this);
     }
 
     /**
@@ -96,35 +101,45 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
      */
     private void setupEventHandlers() {
         // Main menu
-        mainMenu.getStartGameButton().setOnAction(e -> showDifficultySelect());
+        mainMenu.getStartGameButton().setOnAction(e -> showGameModeSelect());
         mainMenu.getCustomButton().setOnAction(e -> showSettings());
         mainMenu.getExitButton().setOnAction(e -> Platform.exit());
+
+        gameModeView.getBackButton().setOnAction(e -> showMainMenu());
+
+        // Time select screen
+        timeSelectView.getContinueButton().setOnAction(e -> showDifficultySelect());
+        timeSelectView.getBackButton().setOnAction(e -> showGameModeSelect());
 
         // Difficulty select screen
         difficultyView.getEasyButton().setOnAction(e -> startGameWithDifficulty("easy"));
         difficultyView.getMediumButton().setOnAction(e -> startGameWithDifficulty("medium"));
         difficultyView.getHardButton().setOnAction(e -> startGameWithDifficulty("hard"));
-        difficultyView.getBackButton().setOnAction(e -> showMainMenu());
+        difficultyView.getBackButton().setOnAction(e -> showGameModeSelect());
 
         // Custom settings
-        settingsView.getStartGameButton().setOnAction(e -> startNewGame());
-        settingsView.getBackButton().setOnAction(e -> showMainMenu());
+        customGameView.getStartGameButton().setOnAction(e -> startNewGame());
+        customGameView.getBackButton().setOnAction(e -> showMainMenu());
     }
 
     private void showMainMenu() {
         root.setCenter(mainMenu);
     }
 
-    /**
-     * Show the difficulty selection screen
-     */
+    private void showGameModeSelect() {
+        root.setCenter(gameModeView);
+    }
+
     private void showDifficultySelect() {
         root.setCenter(difficultyView);
     }
 
+    private void showTimeSelect() {
+        root.setCenter(timeSelectView);
+    }
     private void showSettings() {
-        settingsView.updateUI(boardSize, bulbCount, timedModeEnabled, timeLimit);
-        root.setCenter(settingsView);
+        customGameView.updateUI(boardSize, bulbCount, timedModeEnabled, timeLimit);
+        root.setCenter(customGameView);
     }
 
     /**
@@ -135,17 +150,14 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
             case "easy":
                 boardSize = "5×5";
                 bulbCount = 2;
-                timedModeEnabled = false;
                 break;
             case "medium":
                 boardSize = "8×8";
                 bulbCount = 4;
-                timedModeEnabled = false;
                 break;
             case "hard":
                 boardSize = "10×10";
                 bulbCount = 5;
-                timedModeEnabled = false;
                 break;
         }
 
@@ -168,9 +180,8 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
     }
 
     @Override
-    public void onTimedModeChanged(boolean enabled, int timeLimit) {
+    public void onTimedModeChanged(boolean enabled) {
         this.timedModeEnabled = enabled;
-        this.timeLimit = timeLimit;
         System.out.println("Timed mode " + (enabled ? "enabled" : "disabled"));
     }
 
@@ -180,7 +191,19 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
         System.out.println("Time limit changed to: " + newTimeLimit + "s");
     }
 
-    // Starts a new game
+    @Override
+    public void onClassicModeSelected() {
+        this.timedModeEnabled = false;
+        showDifficultySelect();
+    }
+
+    @Override
+    public void onTimedModeSelected() {
+        this.timedModeEnabled = true;
+        showTimeSelect();
+    }
+
+        // Starts a new game
     private void startNewGame() {
         System.out.println("========== STARTING NEW GAME ==========");
         System.out.println("Board size: " + boardSize);

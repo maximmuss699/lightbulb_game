@@ -201,7 +201,9 @@ public class BoardView extends GridPane implements BoardObserver {
         }
     }
 
-    /** Rotate all tiles to their solution rotations and refresh view. */
+    /**
+     * Rotate all tiles to their solution rotations and refresh the view.
+     */
     private void autoSolve() {
         int[][] sol = model.getSolutionRotations();
         if (sol == null) return;

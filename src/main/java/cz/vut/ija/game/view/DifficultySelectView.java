@@ -29,9 +29,9 @@ public class DifficultySelectView extends VBox {
 
         // Title
         Label titleLabel = new Label("SELECT DIFFICULTY");
-        titleLabel.setFont(Font.font("Orbitron", FontWeight.BOLD, 30));
+        titleLabel.setFont(Font.font("Montserrat", FontWeight.BOLD, 30));
         titleLabel.getStyleClass().add("cyberpunk-title");
-        
+
         // Easy mode
         easyButton = new Button("Easy");
         easyButton.getStyleClass().add("menu-button");
@@ -50,12 +50,12 @@ public class DifficultySelectView extends VBox {
         // Mezera místo separátoru
         Region spacer = new Region();
         spacer.setPrefHeight(25); // Nastavení výšky mezery
-        
+
         // Back button
         backButton = new Button("BACK");
         backButton.getStyleClass().add("menu-button");
         backButton.setPrefWidth(200);
-        
+
         // Add components to the layout
         getChildren().addAll(
                 titleLabel,
@@ -68,8 +68,19 @@ public class DifficultySelectView extends VBox {
     }
 
     // Getters
-    public Button getEasyButton() { return easyButton; }
-    public Button getMediumButton() { return mediumButton; }
-    public Button getHardButton() { return hardButton; }
-    public Button getBackButton() { return backButton; }
+    public Button getEasyButton() {
+        return easyButton;
+    }
+
+    public Button getMediumButton() {
+        return mediumButton;
+    }
+
+    public Button getHardButton() {
+        return hardButton;
+    }
+
+    public Button getBackButton() {
+        return backButton;
+    }
 }
