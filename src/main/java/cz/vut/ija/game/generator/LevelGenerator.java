@@ -3,6 +3,8 @@ package cz.vut.ija.game.generator;
 import cz.vut.ija.game.model.*;
 import java.util.*;
 import java.util.Collections;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 
 /**
  * LevelGenerator: generuje řešení podobné hře LightBulb:
@@ -27,8 +29,34 @@ public class LevelGenerator {
     }
 
     public GameBoard generatePuzzle() {
-        System.out.println("=== GENERATING PUZZLE ===");
-        Tile[][] solution = generateSolutionTiles();
+        int desiredT = Math.max(0, bulbCount - 1);
+        Tile[][] solution;
+        int attempt = 0;
+        do {
+            attempt++;
+            System.out.println("=== GENERATING PUZZLE, ATTEMPT #" + attempt + " ===");
+            solution = generateSolutionTiles();
+            // Count T-branches in solution
+            int tCount = 0;
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    Tile t = solution[r][c];
+                    if ("T".equals(t.getType())) tCount++;
+                }
+            }
+            System.out.println("T-branches: " + tCount + ", desired: " + desiredT);
+            if (tCount != desiredT) {
+                System.out.println("Mismatch T-branches, regenerating...");
+            }
+        } while (attempt < 20 &&
+                 // retry if count mismatch
+                 Arrays.stream(solution)
+                       .flatMap(Arrays::stream)
+                       .filter(t -> t.getType().equals("T"))
+                       .count() != desiredT);
+        if (Arrays.stream(solution).flatMap(Arrays::stream).filter(t -> t.getType().equals("T")).count() != desiredT) {
+            throw new IllegalStateException("Unable to generate solution with exact T-branches");
+        }
         System.out.println("Tree generation complete. Building GameBoard and scrambling rotations.");
         GameBoard board = new GameBoard(solution);
         // Zamícháme rotace dílků
@@ -198,6 +226,29 @@ public class LevelGenerator {
             }
         }
         System.out.println("Optimization complete.");
+
+        // FINAL CONNECTIVITY CHECK
+        Set<Position> checkReach = new HashSet<>();
+        Deque<Position> checkQueue = new ArrayDeque<>();
+        checkReach.add(start);
+        checkQueue.add(start);
+        while (!checkQueue.isEmpty()) {
+            Position cur = checkQueue.poll();
+            for (Side s : conn.getOrDefault(cur, Collections.emptySet())) {
+                Position nxt = cur.step(s);
+                if (!checkReach.contains(nxt)) {
+                    checkReach.add(nxt);
+                    checkQueue.add(nxt);
+                }
+            }
+        }
+        if (checkReach.containsAll(bulbs)) {
+            System.out.println("SUCCESS: ALL BULBS CONNECTED");
+        } else {
+            System.out.println("FAILURE: BULBS NOT ALL CONNECTED: " + bulbs.stream()
+                .filter(b -> !checkReach.contains(b))
+                .toList());
+        }
 
         // 5) Sestavení matice dílků
         System.out.println("Building tile matrix...");
