@@ -181,6 +181,7 @@ public class BoardView extends GridPane implements BoardObserver {
         // recalculate the powered state
         simulator.propagate();
         applyPowerStyles();
+        checkVictory();
     }
 
     private void applyRotation(Button btn, Tile tile) {
@@ -263,5 +264,25 @@ public class BoardView extends GridPane implements BoardObserver {
             default:
                 return current == target;
         }
+    }
+
+    private void checkVictory() {
+        for (int r = 0; r < model.getRows(); r++) {
+            for (int c = 0; c < model.getCols(); c++) {
+                Tile tile = model.getTile(r, c);
+                if ("B".equals(tile.getType()) && !simulator.isPowered(r, c)) {
+                    return; // хотя бы одна лампа не подключена
+                }
+            }
+        }
+
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        alert.setTitle("Victory!");
+        alert.setHeaderText("🎉 All bulbs are lit. Puzzle solved!");
+        alert.setContentText("Click OK to return to the main menu.");
+        alert.showAndWait();
+
+        // Trigger return to main menu
+        fireEvent(new GameWinEvent());
     }
 }

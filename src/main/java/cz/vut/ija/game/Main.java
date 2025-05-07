@@ -208,6 +208,11 @@ public class Main extends Application implements CustomGameView.SettingsChangeLi
         // Set up a new pane
         BorderPane gamePane = new BorderPane();
         gamePane.setCenter(gameController.getView());
+        // Handle game win event
+        gameController.getView().addEventHandler(
+            cz.vut.ija.game.view.GameWinEvent.GAME_WIN,
+            e -> showMainMenu()
+        );
 
         Button backToMenuButton = new Button("Back to main menu");
         backToMenuButton.setOnAction(e -> showMainMenu());
