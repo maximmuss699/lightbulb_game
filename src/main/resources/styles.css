@@ -1,11 +1,49 @@
 /* Overall window background: dark gradient */
 .root {
-    -fx-background-color: linear-gradient(to bottom, #0a0a0a, #1a1a2e);
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #18182a 0%,
+            #23234d 100%
+    );
+}
+
+.title-label {
+    -fx-font-family: 'Montserrat', 'Arial', sans-serif;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: linear-gradient(
+            from 0% 0% to 100% 100%,
+            #ff4ecd 0%,
+            #00eaff 100%
+    );
+    -fx-effect: dropshadow(gaussian, #ff4ecd, 16, 0.5, 0, 0),
+    dropshadow(gaussian, #00eaff, 8, 0.3, 0, 0);
+    -fx-padding: 0 0 20 0;
+    -fx-background-color: transparent;
+    -fx-letter-spacing: 2px;
 }
 
 
 /* Main menu and settings menu styles */
-.main-menu, .settings-menu {
+.main-menu {
+    -fx-background-color: linear-gradient(
+            to bottom right,
+            #18182a 0%,
+            #23234d 100%
+    );
+    -fx-border-color: linear-gradient(
+            to right,
+            #ff4ecd 0%,
+            #00eaff 100%
+    );
+    -fx-border-width: 4px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 30px;
+    -fx-effect: dropshadow(gaussian, #00eaff, 24, 0.2, 0, 0);
+}
+
+.settings-menu {
     -fx-background-color: rgba(20, 20, 20, 0.9);
     -fx-padding: 20px;
     -fx-border-color: #444444;
@@ -17,7 +55,6 @@
 /* Menu title styles */
 .menu-title, .settings-title {
     -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.6), 8, 0, 0, 0);
     -fx-padding: 0 0 10 0;
 }
 
@@ -25,33 +62,60 @@
     -fx-text-fill: white;
 }
 
-/* Menu button styles */
 .menu-button {
     -fx-background-color: linear-gradient(
             to bottom,
-            #444444,
-            #222222
+            #23234d 0%,
+            #18182a 100%
     );
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-padding: 10 20;
-    -fx-border-color: #888888;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
+    -fx-text-fill: #ff4ecd;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 28;
+    -fx-border-color: #00eaff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #00eaff, 8, 0.3, 0, 0);
+    -fx-letter-spacing: 1px;
 }
 
 .menu-button:hover {
     -fx-background-color: linear-gradient(
             to bottom,
-            #555555,
-            #333333
+            #2e2e5e 0%,
+            #23234d 100%
     );
-    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.4), 8, 0, 0, 0);
+    -fx-text-fill: #00eaff;
+    -fx-effect: dropshadow(gaussian, #ff4ecd, 12, 0.5, 0, 0);
 }
 
 .menu-button:pressed {
-    -fx-background-color: #333333;
+    -fx-background-color: #18182a;
+    -fx-text-fill: #ff4ecd;
+}
+
+.menu-button:disabled {
+    -fx-background-color: #333344;
+    -fx-text-fill: #8888aa;
+    -fx-opacity: 0.6;
+    -fx-effect: none;
+    -fx-cursor: default;
+    -fx-border-color: #444466;
+}
+.cyberpunk-title {
+    -fx-font-family: 'Montserrat', 'Arial', sans-serif;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: linear-gradient(
+            from 0% 0% to 100% 100%,
+            #ff4ecd 0%,
+            #00eaff 100%
+    );
+    -fx-padding: 0 0 20 0;
+    -fx-background-color: transparent;
+    -fx-letter-spacing: 2px;
 }
 
 /* The board area: semi-opaque dark plate */
@@ -67,15 +131,14 @@
 /* Each tile: dark stone with light text */
 .tile-button {
     -fx-background-color: linear-gradient(
-        to bottom right,
-        #444444,  /* dark gray */
-        #222222   /* almost black */
+            to bottom right,
+            #444444, /* dark gray */ #222222 /* almost black */
     );
-    -fx-border-color: #888888;   /* medium gray border */
+    -fx-border-color: #888888; /* medium gray border */
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-font-size: 14px;
-    -fx-text-fill: #ffffff;      /* white text */
+    -fx-text-fill: #ffffff; /* white text */
     -fx-cursor: hand;
 }
 
@@ -89,14 +152,87 @@
     -fx-background-color: #333333;
 }
 
-/* Powered tile styling: bright green glow */
-.tile-powered {
-    -fx-background-color: #00ff00; /* bright green */
-    -fx-effect: dropshadow(gaussian, rgba(0,255,0,0.8), 10,0,0,0);
+.slider {
+    -fx-padding: 8 0 8 0;
+    -fx-background-color: transparent;
 }
 
-/* Unpowered tile styling: bright red glow */
-.tile-unpowered {
-    -fx-background-color: #ff0000; /* bright red */
-    -fx-effect: dropshadow(gaussian, rgba(255,0,0,0.8), 10,0,0,0);
+.slider .track {
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            #ff4ecd 0%,
+            #00eaff 100%
+    );
+    -fx-background-radius: 4;
+    -fx-pref-height: 8;
+}
+
+.slider .thumb {
+    -fx-background-color: #00AFFF;
+    -fx-background-radius: 8;
+    -fx-pref-width: 16;
+    -fx-pref-height: 16;
+}
+
+.save-list {
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #18182a 0%,
+            #23234d 100%
+    );
+    -fx-border-color: #00eaff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px;
+    -fx-effect: dropshadow(gaussian, #00eaff, 8, 0.2, 0, 0);
+}
+
+.save-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ff4ecd;
+    -fx-font-family: 'Montserrat', 'Arial', sans-serif;
+    -fx-font-size: 16px;
+    -fx-padding: 8 12;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #23234d;
+}
+
+.save-list .list-cell:selected, .save-list .list-cell:focused {
+    -fx-background-color: #23234d;
+    -fx-text-fill: #00eaff;
+    -fx-effect: dropshadow(gaussian, #ff4ecd, 8, 0.4, 0, 0);
+}
+
+.cyberpunk-label {
+    -fx-font-family: 'Montserrat', 'Arial', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+/* Cyberpunk ComboBox */
+.cyberpunk-combo {
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #23234d 0%,
+            #18182a 100%
+    );
+    -fx-border-color: #ff4ecd;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-font-family: 'Montserrat', 'Arial', sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: #00eaff;
+    -fx-effect: dropshadow(gaussian, #00eaff, 6, 0.2, 0, 0);
+    -fx-padding: 6 12;
+}
+.cyberpunk-combo .list-cell {
+    -fx-background-color: #23234d;
+    -fx-text-fill: #ff4ecd;
+}
+.cyberpunk-combo .list-cell:selected, .cyberpunk-combo .list-cell:focused {
+    -fx-background-color: #18182a;
+    -fx-text-fill: #00eaff;
 }

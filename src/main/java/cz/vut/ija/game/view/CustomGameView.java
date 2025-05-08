@@ -35,7 +35,7 @@ public class CustomGameView extends VBox {
 
         Label titleLabel = new Label("Game settings");
         titleLabel.setFont(Font.font("Montserrat", FontWeight.BOLD, 30));
-        titleLabel.getStyleClass().add("settings-title");
+        titleLabel.getStyleClass().add("cyberpunk-title");
 
         GridPane settingsGrid = new GridPane();
         settingsGrid.setHgap(10);

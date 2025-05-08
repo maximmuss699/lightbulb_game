@@ -237,6 +237,7 @@ public class Main extends Application implements SettingsChangeListener {
             if (saveManager != null) {
                 saveManager.saveGame(true);
             }
+            showMainMenu();
         });
 
         root.setCenter(gamePane);
@@ -344,6 +345,13 @@ public class Main extends Application implements SettingsChangeListener {
             }
             showMainMenu();
         });
+        backToMenuButton.setStyle(
+                "-fx-background-color: #444444;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 5px;"
+        );
 
         HBox bottomBar = new HBox(backToMenuButton);
         bottomBar.setAlignment(javafx.geometry.Pos.CENTER);

@@ -25,7 +25,8 @@ public class LoadGameView extends BorderPane {
         setPadding(new Insets(20));
 
         Label titleLabel = new Label("Select Saved Game");
-        titleLabel.getStyleClass().add("title-label");
+        titleLabel.getStyleClass().add("cyberpunk-title");
+
         setTop(titleLabel);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         BorderPane.setMargin(titleLabel, new Insets(0, 0, 20, 0));
@@ -48,13 +49,17 @@ public class LoadGameView extends BorderPane {
             }
         });
         saveListView.getItems().addAll(saves);
+        saveListView.getStyleClass().add("save-list");
         setCenter(saveListView);
         
         // Load and Back buttons
         loadButton = new Button("Load");
+        loadButton.getStyleClass().add("menu-button");
         loadButton.setDisable(true);
+
         backButton = new Button("Back");
-        
+        backButton.getStyleClass().add("menu-button");
+
         HBox buttonBox = new HBox(10, backButton, loadButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(20, 0, 0, 0));

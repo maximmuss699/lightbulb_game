@@ -24,7 +24,7 @@ public class GameModeSelectView extends VBox {
         setAlignment(Pos.CENTER);
         setSpacing(15);
         setPadding(new Insets(40));
-        getStyleClass().add("difficulty-select");
+        getStyleClass().add("settings-title");
 
         // Title
         Label titleLabel = new Label("SELECT GAME MODE");

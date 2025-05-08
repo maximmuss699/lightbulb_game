@@ -27,7 +27,7 @@ public class MainMenuView extends VBox {
         // game title
         Label titleLabel = new Label("LightBulb");
         titleLabel.setFont(Font.font("Montserrat", FontWeight.BOLD, 36));
-        titleLabel.getStyleClass().add("menu-title");
+        titleLabel.getStyleClass().add("cyberpunk-title");
 
         // start game
         startGameButton = new Button("Play");
@@ -35,7 +35,7 @@ public class MainMenuView extends VBox {
         startGameButton.setPrefWidth(200);
 
         // replay button
-        replayButton = new Button("Replay Games");
+        replayButton = new Button("Replay");
         replayButton.getStyleClass().add("menu-button");
         replayButton.setPrefWidth(200);
 

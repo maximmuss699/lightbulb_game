@@ -11,7 +11,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
+import javafx.scene.control.ScrollPane;
 import java.util.function.Consumer;
 
 /**
@@ -39,32 +39,14 @@ public class ReplayView extends BorderPane {
     }
 
     private void setupView() {
-        setPadding(new Insets(20));
 
-        Label titleLabel = new Label("Replay Game");
-        titleLabel.getStyleClass().add("title-label");
-
-        // Information about the game
-        Label gameInfoLabel = new Label(String.format(
-                "Board: %s, Bulbs: %d, Moves: %d, Status: %s",
-                save.getBoardSize(),
-                save.getBulbCount(),
-                save.getMoves().size(),
-                save.isCompleted() ? "Completed" : "In Progress"
-        ));
-
-        VBox topBox = new VBox(10, titleLabel, gameInfoLabel);
-        topBox.setAlignment(Pos.CENTER);
-        setTop(topBox);
-        BorderPane.setMargin(topBox, new Insets(0, 0, 20, 0));
-
-        // Nastavení počáteční desky
+        // Set up initial board
         GameBoard board = saveService.createBoardFromSave(save, -1);
         boardView = new BoardView(board);
         setCenter(boardView);
 
-        // Ovládací prvky
         moveLabel = new Label("Move: 0 / " + save.getMoves().size());
+        moveLabel.getStyleClass().add("cyberpunk-label");
 
         moveSlider = new Slider(0, save.getMoves().size(), 0);
         moveSlider.setShowTickMarks(true);
@@ -73,23 +55,25 @@ public class ReplayView extends BorderPane {
         moveSlider.setMinorTickCount(1);
         moveSlider.setSnapToTicks(true);
 
-        // Sledování změn slideru
+        int gridSize = board.getRows();
+        double cellSize = 80;
+        moveSlider.setPrefWidth(gridSize * cellSize);
+
         moveSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-            int moveIndex = newVal.intValue() - 1; // -1 pro počáteční stav
+            int moveIndex = newVal.intValue() - 1;
             if (moveIndex != currentMoveIndex) {
                 currentMoveIndex = moveIndex;
                 updateBoardToMove(moveIndex);
                 moveLabel.setText("Move: " + (moveIndex + 1) + " / " + save.getMoves().size());
 
-                // Aktivovat tlačítko Play Game, pokud není na konci dokončené hry
                 boolean isLastMove = moveIndex == save.getMoves().size() - 1;
                 boolean isCompleted = save.isCompleted();
                 playGameButton.setDisable(isLastMove && isCompleted);
             }
         });
 
-        // Tlačítka
-        playGameButton = new Button("Continue from this Move");
+        // Buttons
+        playGameButton = new Button("Continue from this move");
         playGameButton.setDisable(save.isCompleted()); // Zakázat pro dokončené hry
         backButton = new Button("Back to Menu");
 
@@ -105,7 +89,7 @@ public class ReplayView extends BorderPane {
             }
         });
 
-        HBox controlBox = new HBox(10, moveLabel, moveSlider);
+        VBox controlBox = new VBox(5, moveLabel, moveSlider);
         controlBox.setAlignment(Pos.CENTER);
 
         HBox buttonBox = new HBox(10, backButton, playGameButton);

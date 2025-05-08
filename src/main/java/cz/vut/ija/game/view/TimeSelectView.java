@@ -26,7 +26,6 @@ public class TimeSelectView extends VBox {
         setAlignment(Pos.CENTER);
         setSpacing(15);
         setPadding(new Insets(40));
-        getStyleClass().add("difficulty-select");
 
         // Title
         Label titleLabel = new Label("SELECT TIME");
@@ -35,9 +34,11 @@ public class TimeSelectView extends VBox {
 
         // Time limit selector
         Label timeLabel = new Label("Time limit (seconds):");
+        timeLabel.getStyleClass().add("cyberpunk-label");
         timeLimit = new ComboBox<>(
                 FXCollections.observableArrayList(30, 60, 90, 120, 180)
         );
+        timeLimit.getStyleClass().add("cyberpunk-combo");
         timeLimit.setValue(60); // default
         timeLimit.setOnAction(e -> {
             if (changeListener != null) {
@@ -48,12 +49,12 @@ public class TimeSelectView extends VBox {
         // continue to screen with game difficulty
         continueButton = new Button("Continue");
         continueButton.getStyleClass().add("menu-button");
-        continueButton.setPrefWidth(120);
+        continueButton.setPrefWidth(200);
 
         // Back button
         backButton = new Button("Back");
         backButton.getStyleClass().add("menu-button");
-        backButton.setPrefWidth(120);
+        backButton.setPrefWidth(200);
 
         Region spacer = new Region();
         spacer.setPrefHeight(25);
