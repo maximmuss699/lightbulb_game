@@ -21,6 +21,9 @@ public class BoardView extends GridPane implements BoardObserver {
     private final Button solveButton;
     private final HintView hintWindow;
 
+    // Flag to prevent showing victory dialog multiple times
+    private boolean victoryShown = false;
+
     private static final int TILE_SIZE = 80;
 
     // Images for wires
@@ -245,6 +248,7 @@ public class BoardView extends GridPane implements BoardObserver {
      * Checks if all lightbulb tiles are powered. If so, fire up a new Win event
      */
     private void checkVictory() {
+        if (victoryShown) return;
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
                 Tile tile = model.getTile(r, c);
@@ -259,6 +263,8 @@ public class BoardView extends GridPane implements BoardObserver {
         alert.setHeaderText("All bulbs are lit. Puzzle solved!");
         alert.setContentText("Click OK to return to the main menu.");
         alert.showAndWait();
+
+        victoryShown = true;
 
         // Trigger return to the main menu
         fireEvent(new GameWinEvent());
