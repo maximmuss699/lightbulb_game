@@ -18,8 +18,9 @@ public class BoardView extends GridPane implements BoardObserver {
     private final GameSimulator simulator;
     private final StackPane[][] tilePanes;
     private final ImageView[][] tileImages;
-    private final Button solveButton;
-    private final HintView hintWindow;
+
+    private Button solveButton;
+    private HintView hintWindow;
 
     // Flag to prevent showing victory dialog multiple times
     private boolean victoryShown = false;
@@ -62,14 +63,6 @@ public class BoardView extends GridPane implements BoardObserver {
         // Initialize the power simulator
         simulator = new GameSimulator(model);
 
-        // Initialize hint preview (informative mode)
-        if (model.getSolutionRotations() != null) {
-            this.hintWindow = new HintView(model);
-        } else {
-            this.hintWindow = null;
-        }
-
-
         // Build the grid of buttons
         buildGrid();
 
@@ -77,11 +70,23 @@ public class BoardView extends GridPane implements BoardObserver {
         simulator.propagate();
         applyPowerStyles();
 
+        if (model.getSolutionRotations() != null) {
+            initializeHintAndControls();
+        }
+    }
+
+    /**
+     * Initializes the hint window and control buttons.
+     * This inlitializes only when we start the game from play screen
+     */
+    private void initializeHintAndControls() {
+        // Initialize hint window
+        this.hintWindow = new HintView(model);
+
         // add control buttons
         solveButton = new Button("Solve");
         solveButton.setOnAction(e -> autoSolve());
 
-        // Hint button
         Button hintButton = new Button("Show Hints");
         hintButton.setOnAction(e -> hintWindow.show());
 
@@ -94,6 +99,7 @@ public class BoardView extends GridPane implements BoardObserver {
         HBox buttonBox = new HBox(10, solveButton, hintButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10, 0, 0, 0));
+
         // Place buttonBox below the grid
         this.add(buttonBox, 0, model.getRows(), model.getCols(), 1);
     }
@@ -249,7 +255,9 @@ public class BoardView extends GridPane implements BoardObserver {
         simulator.propagate();
         applyPowerStyles();
 
-        hintWindow.refreshHints();
+        if (hintWindow != null) {
+            hintWindow.refreshHints();
+        }
     }
 
 
@@ -277,6 +285,8 @@ public class BoardView extends GridPane implements BoardObserver {
 
         // Trigger return to the main menu
         fireEvent(new GameWinEvent());
-        hintWindow.close();
+        if (hintWindow != null) {
+            hintWindow.close();
+        }
     }
 }
