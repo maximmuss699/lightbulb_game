@@ -19,6 +19,7 @@ import java.util.Arrays;
  * Všechny kroky generování jsou zalogovány v konzoli.
  */
 public class LevelGenerator {
+    private Set<Position> checkReach = new HashSet<>();
     private static final double T_BIAS = 0.2;
     private final int rows, cols, bulbCount;
     private final Random rnd = new Random();
@@ -81,6 +82,17 @@ public class LevelGenerator {
             for (int c = 0; c < cols; c++) {
                 if (solution[r][c] instanceof TTile) {
                     solRots[r][c] = (solRots[r][c] + 270) % 360;
+                }
+            }
+        }
+        // Only include tiles that are part of the power path from source to bulbs
+        // Uses checkReach from generateSolutionTiles
+        Set<Position> poweredPath = new HashSet<>(checkReach);
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                Position p = new Position(r, c);
+                if (!poweredPath.contains(p)) {
+                    solRots[r][c] = -1; // mark as not part of the solution
                 }
             }
         }
@@ -254,7 +266,7 @@ public class LevelGenerator {
         System.out.println("Optimization complete.");
 
         // FINAL CONNECTIVITY CHECK
-        Set<Position> checkReach = new HashSet<>();
+        checkReach.clear();
         Deque<Position> checkQueue = new ArrayDeque<>();
         checkReach.add(start);
         checkQueue.add(start);

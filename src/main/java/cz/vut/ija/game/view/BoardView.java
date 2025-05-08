@@ -249,6 +249,7 @@ public class BoardView extends GridPane implements BoardObserver {
         if (sol == null) return;
         for (int r = 0; r < sol.length; r++) {
             for (int c = 0; c < sol[r].length; c++) {
+                if (sol[r][c] == -1) continue;  // 🔴 Skip tiles not in solution
                 model.setTileRotation(r, c, sol[r][c]);
             }
         }

@@ -156,6 +156,10 @@ public class HintView extends GridPane {
                 }
                 int current = tile.getRotation();
                 int target = model.getSolutionRotations()[r][c];
+                if (target == -1) {
+                    tileHints[r][c].setText(""); // skip non-solution tiles
+                    continue;
+                }
                 int diff = (target - current + 360) % 360;
                 int clicks = diff / 90;
                 // For straight 'I' tiles, only parity of rotations matters
