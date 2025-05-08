@@ -5,7 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Represents a saved state of a game, including board configuration,
+ * moves performed, and game metadata.
+ *
+ * It contains a list of moves performed during gameplay,
+ * save date, board size, bulb count, and completion status.
+ */
 public class GameSave implements Serializable {
     
     // data for game identification
@@ -18,14 +24,14 @@ public class GameSave implements Serializable {
     private String[][] initialBoardTypes;  
     private int[][] initialBoardRotations;
 
-    
     private List<GameMove> moves;
 
     public GameSave() {
         this.moves = new ArrayList<>();
         this.saveDate = new Date();
     }
-    
+
+    // A class representing a single move performed during gameplay.
     public static class GameMove implements Serializable {
         private int row;
         private int col;
@@ -105,6 +111,7 @@ public class GameSave implements Serializable {
         return moves;
     }
 
+    // add a move to the list of moves performed during gameplay
     public void addMove(int row, int col, int oldRotation, int newRotation) {
         moves.add(new GameMove(row, col, oldRotation, newRotation));
     }

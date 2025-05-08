@@ -6,7 +6,6 @@ import cz.vut.ija.game.service.GameSaveManager;
 import cz.vut.ija.game.service.GameSaveService;
 import cz.vut.ija.game.view.*;
 import cz.vut.ija.game.view.HintView;
-import cz.vut.ija.game.view.TileClickEvent;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -32,15 +31,14 @@ import static cz.vut.ija.game.view.GameWinEvent.GAME_WIN;
  */
 public class Main extends Application implements SettingsChangeListener {
 
+    // Resolution of the window
     private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 1000;
 
     private Scene scene;
     private BorderPane root;
 
-    /**
-     * Views
-     */
+    // All the views
     private MainMenuView mainMenuView;
     private GameModeSelectView gameModeView;
     private DifficultySelectView difficultyView;
@@ -159,14 +157,13 @@ public class Main extends Application implements SettingsChangeListener {
     }
 
     private void showSavedGames() {
-        // Vytvořit/získat instanci GameSaveService
         GameSaveService saveService = new GameSaveService();
 
-        // Získat seznam uložených her
+        // Create a list of all saved games
         List<GameSave> saves = saveService.getAllSaves();
 
+        // If no saved games exist, show an alert and return
         if (saves.isEmpty()) {
-            // Pokud nejsou žádné uložené hry, zobrazit zprávu
             javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
                     javafx.scene.control.Alert.AlertType.INFORMATION);
             alert.setTitle("No Saved Games");
@@ -176,7 +173,7 @@ public class Main extends Application implements SettingsChangeListener {
             return;
         }
 
-        // Vytvořit a zobrazit view pro výběr uložené hry
+        // Create a view for selecting a saved game to replay
         LoadGameView loadGameView = new LoadGameView(saves);
         loadGameView.setOnSaveSelected(save -> showReplay(save));
         loadGameView.getBackButton().setOnAction(e -> showMainMenu());
@@ -184,45 +181,47 @@ public class Main extends Application implements SettingsChangeListener {
         root.setCenter(loadGameView);
     }
 
+    /**
+     * Show a replay of a saved game.
+     *
+     * @param save
+     */
     private void showReplay(GameSave save) {
         ReplayView replayView = new ReplayView(save);
 
-        // Nastavit callbacky
+        // Set up event handlers for replay buttons
         replayView.setOnPlayGameAtMove(moveIndex -> continueGameFromMove(save, moveIndex));
-        replayView.setOnBackToMenu(() -> showMainMenu());
+        replayView.setOnBackToMenu(this::showMainMenu);
 
         root.setCenter(replayView);
     }
 
     private void continueGameFromMove(GameSave save, int moveIndex) {
-        // Vytvořit desku v požadovaném stavu
+        // Creates a new GameBoard from the save and replays the game from the given move index
         GameSaveService saveService = new GameSaveService();
         GameBoard board = saveService.createBoardFromSave(save, moveIndex);
 
-        // Vytvořit herní kontroler
         gameController = new GameController(board);
 
-        // Vytvořit nový GameSaveManager s původními údaji
         saveManager = new GameSaveManager(board, save.getBoardSize(), save.getBulbCount());
 
-        // Nastavit saveManager do kontroleru
         gameController.setSaveManager(saveManager);
 
-        // Zaznamenat všechny tahy až do moveIndex, protože pokračujeme v existující hře
+        // Record all the moves up to the given index
         List<GameSave.GameMove> movesToReplay = save.getMoves().subList(0, moveIndex + 1);
         for (GameSave.GameMove move : movesToReplay) {
             saveManager.recordMove(move.getRow(), move.getCol(), move.getOldRotation(), move.getNewRotation());
         }
 
-        // Vytvořit a nastavit herní obrazovku
+        // Create a new pane for the game controller
         BorderPane gamePane = new BorderPane();
         gamePane.setCenter(gameController.getView());
 
-        // Přidat tlačítko pro návrat do menu, které uloží hru
+        // Create a button that will save the game and mark it as unfinished
         Button backToMenuButton = new Button("Back to Menu");
         backToMenuButton.setOnAction(e -> {
             if (saveManager != null) {
-                saveManager.saveGame(false); // Uložit jako nedokončenou
+                saveManager.saveGame(false);
             }
             showMainMenu();
         });
@@ -233,15 +232,13 @@ public class Main extends Application implements SettingsChangeListener {
 
         gamePane.setBottom(bottomBar);
 
-        // Přidat handler pro výhru, který označí hru jako dokončenou
+        // An event handler that will save the game and mark it as won (finished)
         gameController.getView().addEventHandler(GAME_WIN, e -> {
             if (saveManager != null) {
-                saveManager.saveGame(true); // Uložit jako dokončenou
+                saveManager.saveGame(true);
             }
-            // Váš existující kód pro zobrazení výhry
         });
 
-        // Zobrazit herní obrazovku
         root.setCenter(gamePane);
     }
 
@@ -320,7 +317,7 @@ public class Main extends Application implements SettingsChangeListener {
         }
         System.out.println("=======================================");
 
-        // Parsování velikosti desky
+        // Parse the board size
         String[] dimensions = boardSize.split("×");
         int rows = Integer.parseInt(dimensions[0]);
         int cols = Integer.parseInt(dimensions[1]);
@@ -338,20 +335,14 @@ public class Main extends Application implements SettingsChangeListener {
         // Set up a new pane
         BorderPane gamePane = new BorderPane();
         gamePane.setCenter(gameController.getView());
-        // Handle game win event
-        gameController.getView().addEventHandler(GAME_WIN, e -> {
-            if (saveManager != null) {
-                saveManager.saveGame(true); // Uložit jako dokončenou
-            }
-            showMainMenu();
-        });
 
+        // save the game when going back to the main menu
         Button backToMenuButton = new Button("Back to main menu");
         backToMenuButton.setOnAction(event -> {
             if (saveManager != null) {
-                saveManager.saveGame(false); // Uložit rozehranou hru
+                saveManager.saveGame(false); // Mark as unfinished
             }
-            showMainMenu(); // Zobrazit hlavní menu
+            showMainMenu();
         });
 
         HBox bottomBar = new HBox(backToMenuButton);
@@ -359,9 +350,17 @@ public class Main extends Application implements SettingsChangeListener {
         bottomBar.setPadding(new javafx.geometry.Insets(10));
 
         gamePane.setBottom(bottomBar);
+
+        // Handle game win event
+        gameController.getView().addEventHandler(GAME_WIN, e -> {
+            if (saveManager != null) {
+                saveManager.saveGame(true); // Mark the game as finished
+            }
+            showMainMenu();
+        });
+
         root.setCenter(gamePane);
-        // Show hint preview window
-        }
+    }
 
     /**
      * Standard Java main method that launches the JavaFX application.

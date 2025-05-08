@@ -2,7 +2,6 @@ package cz.vut.ija.game.model;
 
 import java.util.Set;
 import java.util.EnumSet;
-import cz.vut.ija.game.model.Side;
 
 /** T-shaped connector (all but one side). */
 public class TTile extends Tile {

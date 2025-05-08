@@ -9,12 +9,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 /**
- * The main menu screen. Used for entering settings, starting a new game or exitting the app.
+ * The main menu screen. Used for entering settings, starting a new game, loading a game (replay) or exitting the app.
  */
 public class MainMenuView extends VBox {
 
     private final Button startGameButton;
-    private Button replayButton;
+    private final Button replayButton;
     private final Button customButton;
     private final Button exitButton;
 

@@ -56,6 +56,7 @@ public class HintView extends GridPane {
         setAlignment(Pos.CENTER);
         setHgap(5);
         setVgap(5);
+
         // Black background for hint preview
         this.setStyle("-fx-background-color: black;");
 

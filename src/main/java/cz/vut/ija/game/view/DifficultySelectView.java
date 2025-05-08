@@ -4,12 +4,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 
 /**
  * Screen for selecting game difficulty level.
@@ -47,9 +45,9 @@ public class DifficultySelectView extends VBox {
         hardButton.getStyleClass().add("menu-button");
         hardButton.setPrefWidth(200);
 
-        // Mezera místo separátoru
+        // Add a space between the buttons
         Region spacer = new Region();
-        spacer.setPrefHeight(25); // Nastavení výšky mezery
+        spacer.setPrefHeight(25);
 
         // Back button
         backButton = new Button("BACK");

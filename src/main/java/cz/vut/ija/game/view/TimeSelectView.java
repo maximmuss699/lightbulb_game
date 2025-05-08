@@ -12,11 +12,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.layout.Region;
 
+/**
+ * Screen for selecting the amount of time in timed mode.
+ */
 public class TimeSelectView extends VBox {
-
-    /**
-     * Screen for selecting game difficulty level.
-     */
     private final ComboBox<Integer> timeLimit;
     private final Button continueButton;
     private final Button backButton;
@@ -46,6 +45,7 @@ public class TimeSelectView extends VBox {
             }
         });
 
+        // continue to screen with game difficulty
         continueButton = new Button("Continue");
         continueButton.getStyleClass().add("menu-button");
         continueButton.setPrefWidth(120);

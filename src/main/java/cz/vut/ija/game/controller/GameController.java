@@ -124,6 +124,11 @@ public class GameController {
         }
     }
 
+    /**
+     * Sets the save manager responsible for handling game state saving and move recording.
+     *
+     * @param saveManager the instance of GameSaveManager to be used for managing game saves
+     */
     public void setSaveManager(GameSaveManager saveManager) {
         this.saveManager = saveManager;
     }

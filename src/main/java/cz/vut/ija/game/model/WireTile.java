@@ -2,7 +2,6 @@ package cz.vut.ija.game.model;
 
 import java.util.Set;
 import java.util.EnumSet;
-import cz.vut.ija.game.model.Side;
 
 /** A straight‐wire tile (“I” shape). */
 public class WireTile extends Tile {

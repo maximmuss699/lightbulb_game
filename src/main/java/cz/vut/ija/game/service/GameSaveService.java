@@ -3,22 +3,19 @@ package cz.vut.ija.game.service;
 import cz.vut.ija.game.model.GameBoard;
 import cz.vut.ija.game.model.GameSave;
 import cz.vut.ija.game.model.Tile;
-
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Service for creating, saving and loading game saves.
+ */
 public class GameSaveService {
     private static final String SAVE_DIRECTORY = "saves";
 
+    // Creates a new save directory if it doesn't exist
     public GameSaveService() {
-        // Vytvoření adresáře pro uložení, pokud neexistuje
         File directory = new File(SAVE_DIRECTORY);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -26,14 +23,14 @@ public class GameSaveService {
     }
 
     /**
-     * Vytvoří objekt GameSave z aktuální herní desky
+     * Creates a new game save from the given board.
      */
     public GameSave createSaveFromBoard(GameBoard board, String boardSize, int bulbCount) {
         GameSave save = new GameSave();
         save.setBoardSize(boardSize);
         save.setBulbCount(bulbCount);
 
-        // Uložení rozložení desky
+        // saves the board state
         int rows = board.getRows();
         int cols = board.getCols();
 
@@ -55,7 +52,10 @@ public class GameSaveService {
     }
 
     /**
-     * Uloží hru do souboru
+     * Save the game to a file
+     *
+     * @param gameSave game save to save
+     * @param completed was the game finished?
      */
     public void saveGame(GameSave gameSave, boolean completed) {
         gameSave.setCompleted(completed);
@@ -71,7 +71,9 @@ public class GameSaveService {
     }
 
     /**
-     * Načte hru ze souboru
+     * Loads a game from a file
+     *
+     * @param filename name of the file to load
      */
     public GameSave loadGame(String filename) {
         File file = new File(SAVE_DIRECTORY, filename);
@@ -85,7 +87,7 @@ public class GameSaveService {
     }
 
     /**
-     * Vrátí seznam všech uložených her
+     * Returns a list of all save filenames in the saves directory.
      */
     public List<String> getAllSaveFilenames() {
         List<String> filenames = new ArrayList<>();
@@ -104,7 +106,7 @@ public class GameSaveService {
     }
 
     /**
-     * Načte všechny uložené hry
+     * Loads all saves from the saves directory.
      */
     public List<GameSave> getAllSaves() {
         List<GameSave> saves = new ArrayList<>();
@@ -121,18 +123,22 @@ public class GameSaveService {
     }
 
     /**
-     * Vytvoří herní desku z uloženého stavu po aplikování zadaného počtu tahů
+     * Recreates a GameBoard instance based on a previously saved game state
+     *
+     * @param save GameSave object containing the saved game data
+     * @param moveIndex the index of the last move to apply from the saved move history (0 is first move)
+     * @return a GameBoard instance with all specified moves up to the given move index
      */
     public GameBoard createBoardFromSave(GameSave save, int moveIndex) {
-        // Parsování velikosti
+        // Parse the board size
         String[] dimensions = save.getBoardSize().split("×");
         int rows = Integer.parseInt(dimensions[0]);
         int cols = Integer.parseInt(dimensions[1]);
 
-        // Vytvoření prázdné desky
+        // create a new board
         GameBoard board = new GameBoard(rows, cols);
 
-        // Nastavení počátečního rozložení
+        // set the initial board state
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 board.setTileType(r, c, save.getInitialBoardTypes()[r][c]);
@@ -140,7 +146,7 @@ public class GameSaveService {
             }
         }
 
-        // Aplikování tahů až do požadovaného indexu
+        // Apply the moves till the given index
         List<GameSave.GameMove> moves = save.getMoves();
         for (int i = 0; i <= moveIndex && i < moves.size(); i++) {
             GameSave.GameMove move = moves.get(i);
@@ -151,7 +157,7 @@ public class GameSaveService {
     }
 
     /**
-     * Generuje název souboru pro uložení hry
+     * Generates a new filename for the given save.
      */
     private String generateFilename(GameSave save) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");

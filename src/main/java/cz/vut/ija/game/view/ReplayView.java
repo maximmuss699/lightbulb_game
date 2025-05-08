@@ -14,6 +14,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.function.Consumer;
 
+/**
+ * Screen for replaying a saved game.
+ * Allows to select a move and continue the game from that move.
+ */
 public class ReplayView extends BorderPane {
     private final GameSave save;
     private final GameSaveService saveService;
@@ -37,11 +41,10 @@ public class ReplayView extends BorderPane {
     private void setupView() {
         setPadding(new Insets(20));
 
-        // Nadpis
         Label titleLabel = new Label("Replay Game");
         titleLabel.getStyleClass().add("title-label");
 
-        // Informace o hře
+        // Information about the game
         Label gameInfoLabel = new Label(String.format(
                 "Board: %s, Bulbs: %d, Moves: %d, Status: %s",
                 save.getBoardSize(),

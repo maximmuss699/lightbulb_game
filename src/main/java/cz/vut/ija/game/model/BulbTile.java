@@ -2,7 +2,6 @@ package cz.vut.ija.game.model;
 
 import java.util.Set;
 import java.util.EnumSet;
-import cz.vut.ija.game.model.Side;
 
 /** A light bulb tile: connects in one direction to receive power. */
 public class BulbTile extends Tile {

@@ -4,8 +4,8 @@ import cz.vut.ija.game.model.GameBoard;
 import cz.vut.ija.game.model.GameSave;
 
 /**
- * Správce pro ukládání herního stavu a zaznamenávání tahů.
- * Odděluje logiku ukládání od herního kontroleru.
+ * Manages the saving and recording of moves for a game. This class facilitates
+ * recording moves, saving the game state, and retrieving the current game save.
  */
 public class GameSaveManager {
     private final GameBoard board;
@@ -16,11 +16,11 @@ public class GameSaveManager {
     private boolean newMovesMade = false;
     
     /**
-     * Vytvoří nového správce ukládání pro danou herní desku.
-     * 
-     * @param board herní deska
-     * @param boardSize řetězec s velikostí desky (např. "5×5")
-     * @param bulbCount počet žárovek
+     * Create a new game save manager.
+     *
+     * @param board board to save
+     * @param boardSize size of the board
+     * @param bulbCount number of bulbs on the board
      */
     public GameSaveManager(GameBoard board, String boardSize, int bulbCount) {
         this.board = board;
@@ -31,12 +31,12 @@ public class GameSaveManager {
     }
 
     /**
-     * Zaznamená tah pro pozdější uložení.
+     * Saves the current move.
      * 
-     * @param row řádek
-     * @param col sloupec
-     * @param oldRotation původní rotace
-     * @param newRotation nová rotace
+     * @param row row
+     * @param col column
+     * @param oldRotation old rotation
+     * @param newRotation new rotation
      */
     public void recordMove(int row, int col, int oldRotation, int newRotation) {
         currentSave.addMove(row, col, oldRotation, newRotation);
@@ -44,9 +44,9 @@ public class GameSaveManager {
     }
     
     /**
-     * Uloží aktuální stav hry do souboru.
+     * Saves the current game state.
      * 
-     * @param completed zda je hra dokončena
+     * @param completed was the game finished?
      */
     public void saveGame(boolean completed) {
         if (newMovesMade) {
@@ -56,9 +56,7 @@ public class GameSaveManager {
     }
     
     /**
-     * Vrátí aktuální uloženou hru.
-     * 
-     * @return objekt s aktuální uloženou hrou
+     * Retrieves the current game save.
      */
     public GameSave getCurrentSave() {
         return currentSave;

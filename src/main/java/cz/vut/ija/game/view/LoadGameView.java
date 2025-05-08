@@ -8,11 +8,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Screen for selecting saved game to load.
+ */
 public class LoadGameView extends BorderPane {
     private ListView<GameSave> saveListView;
     private Button loadButton;
@@ -21,15 +23,14 @@ public class LoadGameView extends BorderPane {
 
     public LoadGameView(List<GameSave> saves) {
         setPadding(new Insets(20));
-        
-        // Nadpis
+
         Label titleLabel = new Label("Select Saved Game");
         titleLabel.getStyleClass().add("title-label");
         setTop(titleLabel);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         BorderPane.setMargin(titleLabel, new Insets(0, 0, 20, 0));
         
-        // Seznam uložených her
+        // A list of saved games
         saveListView = new ListView<>();
         saveListView.setCellFactory(param -> new javafx.scene.control.ListCell<GameSave>() {
             @Override
@@ -49,7 +50,7 @@ public class LoadGameView extends BorderPane {
         saveListView.getItems().addAll(saves);
         setCenter(saveListView);
         
-        // Tlačítka
+        // Load and Back buttons
         loadButton = new Button("Load");
         loadButton.setDisable(true);
         backButton = new Button("Back");
@@ -59,12 +60,11 @@ public class LoadGameView extends BorderPane {
         buttonBox.setPadding(new Insets(20, 0, 0, 0));
         setBottom(buttonBox);
         
-        // Povolit tlačítko Load po výběru hry
+        // set up listeners for buttons
         saveListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             loadButton.setDisable(newVal == null);
         });
-        
-        // Nastavit akci pro tlačítko Load
+
         loadButton.setOnAction(e -> {
             if (onSaveSelected != null) {
                 GameSave selected = saveListView.getSelectionModel().getSelectedItem();

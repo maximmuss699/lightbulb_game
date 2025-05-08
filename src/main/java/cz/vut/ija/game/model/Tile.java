@@ -2,7 +2,6 @@ package cz.vut.ija.game.model;
 
 import java.util.Set;
 import java.util.EnumSet;
-import cz.vut.ija.game.model.Side;
 
 /** Base class for all tiles. */
 public abstract class Tile {

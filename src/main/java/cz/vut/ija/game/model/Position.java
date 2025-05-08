@@ -6,10 +6,10 @@ public record Position(int row, int col) {
     /* ──────────────────────────────── */
     /*  ★ COMPATIBILITY ACCESSORS ★     */
     /* ──────────────────────────────── */
-    public int getRow() {    // <-- добавить это
+    public int getRow() {    // <-- add this
         return row;
     }
-    public int getCol() {    // <-- и это
+    public int getCol() {    // <-- and this
         return col;
     }
 

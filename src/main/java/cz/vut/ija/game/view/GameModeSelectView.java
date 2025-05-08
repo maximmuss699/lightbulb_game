@@ -4,19 +4,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 
-
+/**
+ * Screen for selecting game mode - either timed or not timed.
+ */
 public class GameModeSelectView extends VBox {
 
-    /**
-     * Screen for selecting game mode - either timed or not timed.
-     */
     private final Button classicModeButton;
     private final Button timedModeButton;
     private final Button backButton;
@@ -44,9 +41,9 @@ public class GameModeSelectView extends VBox {
         timedModeButton.getStyleClass().add("menu-button");
         timedModeButton.setPrefWidth(200);
 
-        // Mezera místo separátoru
+        // Add a space between the buttons
         Region spacer = new Region();
-        spacer.setPrefHeight(25); // Nastavení výšky mezery
+        spacer.setPrefHeight(25);
 
         // Back button
         backButton = new Button("BACK");
@@ -63,6 +60,9 @@ public class GameModeSelectView extends VBox {
         );
     }
 
+    /**
+     * Sets the listener for the settings changes.
+     */
     public void setSettingsChangeListener(SettingsChangeListener listener) {
         this.changeListener = listener;
 

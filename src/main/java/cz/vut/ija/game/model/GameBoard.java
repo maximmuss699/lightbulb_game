@@ -1,9 +1,7 @@
 package cz.vut.ija.game.model;
-import cz.vut.ija.game.model.WireTile;
+
 import java.util.ArrayList;
 import java.util.List;
-import cz.vut.ija.game.model.Position;
-import cz.vut.ija.game.model.SourceTile;
 
 /**
  * Model: a 2D grid of Tile objects.
@@ -98,13 +96,8 @@ public class GameBoard {
                 break;
         }
 
-        // Nastavení původní rotace
         newTile.setRotation(originalRotation);
-
-        // Nahrazení dlaždice v poli
         tiles[row][col] = newTile;
-
-        // Notifikace pozorovatelů
         notifyObservers(row, col);
     }
 

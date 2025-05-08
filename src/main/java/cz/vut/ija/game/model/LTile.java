@@ -2,7 +2,6 @@ package cz.vut.ija.game.model;
 
 import java.util.Set;
 import java.util.EnumSet;
-import cz.vut.ija.game.model.Side;
 
 /** L-shaped connector (3 o’clock + 6 o’clock + 9 o’clock). */
 public class LTile extends Tile {

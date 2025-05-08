@@ -25,9 +25,6 @@ public class CustomGameView extends VBox {
     private final Button startGameButton;
     private final Button backButton;
 
-
-    // Interface for checking changed options in settings
-
     private SettingsChangeListener changeListener;
 
     public CustomGameView() {

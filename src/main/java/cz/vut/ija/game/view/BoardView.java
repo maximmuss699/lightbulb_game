@@ -1,13 +1,7 @@
 package cz.vut.ija.game.view;
 
-import cz.vut.ija.game.view.HintView;
-import cz.vut.ija.game.view.TileClickEvent;
-import cz.vut.ija.game.view.GameWinEvent;
-
-import cz.vut.ija.game.model.SourceTile;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import cz.vut.ija.game.model.BoardObserver;
 import cz.vut.ija.game.model.GameBoard;
 import cz.vut.ija.game.model.Tile;
@@ -15,9 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.transform.Rotate;
 import cz.vut.ija.game.logic.GameSimulator;
-import cz.vut.ija.game.model.Position;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 
@@ -44,7 +36,6 @@ public class BoardView extends GridPane implements BoardObserver {
     private final Image lightbulb_lit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_lit.png"));
     private final Image lightbulb_unlit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_unlit.png"));
     private final Image power_node = new Image(getClass().getResourceAsStream("/powernode/power_node.png"));
-    //private final Button[][] buttons;
 
     public BoardView(GameBoard model) {
 
@@ -65,11 +56,9 @@ public class BoardView extends GridPane implements BoardObserver {
         tilePanes = new StackPane[model.getRows()][model.getCols()];
         tileImages = new ImageView[model.getRows()][model.getCols()];
 
-        // Allocate the button grid matching the board dimensions
-        //buttons = new Button[model.getRows()][model.getCols()];
-
         // Initialize the power simulator
         simulator = new GameSimulator(model);
+
         // Initialize hint preview (informative mode)
         this.hintWindow = new HintView(model);
 
@@ -83,13 +72,16 @@ public class BoardView extends GridPane implements BoardObserver {
         // add control buttons
         solveButton = new Button("Solve");
         solveButton.setOnAction(e -> autoSolve());
+
+        // Hint button
         Button hintButton = new Button("Show Hints");
         hintButton.setOnAction(e -> hintWindow.show());
-        // Style buttons (dark background, white text)
-        String btnStyle = "-fx-background-color: #444444; -fx-text-fill: white;"
-                        + " -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;";
+
+        // apply a style to the buttons
+        String btnStyle = "-fx-background-color: #444444; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;";
         solveButton.setStyle(btnStyle);
         hintButton.setStyle(btnStyle);
+
         // Arrange buttons horizontally with spacing
         HBox buttonBox = new HBox(10, solveButton, hintButton);
         buttonBox.setAlignment(Pos.CENTER);
@@ -98,6 +90,9 @@ public class BoardView extends GridPane implements BoardObserver {
         this.add(buttonBox, 0, model.getRows(), model.getCols(), 1);
     }
 
+    /**
+     * Constructs the grid structure for the board view.
+     */
     private void buildGrid() {
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
@@ -108,6 +103,14 @@ public class BoardView extends GridPane implements BoardObserver {
         }
     }
 
+    /**
+     * Creates a visual representation of a tile as a StackPane with a specific size.
+     * Links a mouse click action to the tile, firing a custom TileClickEvent.
+     *
+     * @param r the row index of the tile
+     * @param c the column index of the tile
+     * @return a StackPane representing the tile at the specified position
+     */
     private StackPane createTilePane(int r, int c) {
         Tile tile = model.getTile(r, c);
 
@@ -116,6 +119,7 @@ public class BoardView extends GridPane implements BoardObserver {
         tilePane.setMinSize(TILE_SIZE, TILE_SIZE);
         tilePane.setMaxSize(TILE_SIZE, TILE_SIZE);
 
+        // loads a specific image for the tile type
         ImageView tileImage = createTileImage(tile);
         tileImages[r][c] = tileImage;
 
@@ -129,6 +133,13 @@ public class BoardView extends GridPane implements BoardObserver {
         return tilePane;
     }
 
+    /**
+     * Creates a visual representation of a tile as an ImageView, sets its size,
+     * and initializes its image to the unpowered state.
+     *
+     * @param tile the Tile object for which the ImageView is to be created
+     * @return an ImageView representing the specified tile
+     */
     private ImageView createTileImage(Tile tile) {
         ImageView imageView = new ImageView();
         imageView.setFitWidth(TILE_SIZE);
@@ -141,6 +152,14 @@ public class BoardView extends GridPane implements BoardObserver {
         return imageView;
     }
 
+    /**
+     * Updates the appearance of a tile's image based on its type, whether it is powered,
+     * and its current rotation.
+     *
+     * @param imageView the ImageView representing the tile's image
+     * @param tile the tile whose image is to be updated
+     * @param powered a boolean indicating whether the tile is powered
+     */
     private void updateTileImage(ImageView imageView, Tile tile, boolean powered) {
         String tileType = tile.getType();
 
@@ -171,24 +190,12 @@ public class BoardView extends GridPane implements BoardObserver {
         imageView.setRotate(tile.getRotation());
     }
 
-
-    private Button createButton(int r, int c) {
-        Tile tile = model.getTile(r, c);
-        Button btn = new Button(tile.getType());
-        btn.setPrefSize(50, 50);
-
-        // apply the stone-like style
-        btn.getStyleClass().add("tile-button");
-
-        applyRotation(btn, tile);
-
-        // wrap click into MVC event
-        btn.setOnAction(e ->
-                fireEvent(new TileClickEvent(r, c))
-        );
-        return btn;
-    }
-
+    /**
+     * Updates the visual state of a tile when it is changed.
+     *
+     * @param row the row index of the tile
+     * @param col the column index of the tile
+     */
     @Override
     public void tileChanged(int row, int col) {
         Tile tile = model.getTile(row, col);
@@ -201,14 +208,6 @@ public class BoardView extends GridPane implements BoardObserver {
         checkVictory();
     }
 
-    private void applyRotation(Button btn, Tile tile) {
-        btn.getTransforms().setAll(
-                new Rotate(tile.getRotation(),
-                        btn.getPrefWidth() / 2,
-                        btn.getPrefHeight() / 2)
-        );
-    }
-
     /**
      * Updates each tile's image based on whether it's powered.
      */
@@ -216,6 +215,7 @@ public class BoardView extends GridPane implements BoardObserver {
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
                 Tile tile = model.getTile(r, c);
+
                 // Remove old power classes
                 boolean powered = simulator.isPowered(r, c);
                 updateTileImage(tileImages[r][c], tile, powered);
@@ -241,20 +241,22 @@ public class BoardView extends GridPane implements BoardObserver {
     }
 
 
-
+    /**
+     * Checks if all lightbulb tiles are powered. If so, fire up a new Win event
+     */
     private void checkVictory() {
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
                 Tile tile = model.getTile(r, c);
                 if ("B".equals(tile.getType()) && !simulator.isPowered(r, c)) {
-                    return; // хотя бы одна лампа не подключена
+                    return; // at least one lightbulb is not powered
                 }
             }
         }
 
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setTitle("Victory!");
-        alert.setHeaderText("🎉 All bulbs are lit. Puzzle solved!");
+        alert.setHeaderText("All bulbs are lit. Puzzle solved!");
         alert.setContentText("Click OK to return to the main menu.");
         alert.showAndWait();
 
