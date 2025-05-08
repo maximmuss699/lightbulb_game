@@ -149,6 +149,11 @@ public class HintView extends GridPane {
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
                 Tile tile = model.getTile(r, c);
+                // Skip non-solution tiles: no base connections and not source or bulb
+                if (tile.getBaseSides().isEmpty() && !"S".equals(tile.getType()) && !"B".equals(tile.getType())) {
+                    tileHints[r][c].setText("");
+                    continue;
+                }
                 int current = tile.getRotation();
                 int target = model.getSolutionRotations()[r][c];
                 int diff = (target - current + 360) % 360;
@@ -175,19 +180,19 @@ public class HintView extends GridPane {
         // Refresh tile states and hint counts before showing
         refreshHints();
 
-        // If stage doesn't exist or was closed, create a new one
-        if (stage == null || !stage.isShowing()) {
+        // If stage doesn't exist, create a new one
+        if (stage == null) {
             stage = new Stage();
             stage.setTitle("Hint Preview");
             stage.setScene(new Scene(this));
         }
-        // Show and bring to front
+        // Un-hide or show
         stage.show();
         stage.toFront();
     }
     public void close() {
         if (stage != null) {
-            stage.close();
+            stage.hide();
         }
     }
 }
