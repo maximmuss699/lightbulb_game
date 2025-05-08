@@ -240,52 +240,7 @@ public class BoardView extends GridPane implements BoardObserver {
         hintWindow.refreshHints();
     }
 
-    /** Show overlay with number of rotations needed for each tile. */
-    public void showHintOverlay() {
-        int[][] solutionRotations = model.getSolutionRotations();
-        if (solutionRotations == null) return;
 
-        for (int r = 0; r < model.getRows(); r++) {
-            for (int c = 0; c < model.getCols(); c++) {
-                Tile tile = model.getTile(r, c);
-                int current = tile.getRotation();
-                int target = solutionRotations[r][c];
-                int diff = (target - current + 360) % 360;
-                int numClicks = diff / 90;
-
-                if (isSameOrientation(tile, current, target)) {
-                    numClicks = 0;
-                }
-
-                StackPane pane = tilePanes[r][c];
-
-                pane.getChildren().removeIf(node ->
-                        "hint-label".equals(node.getUserData()) ||
-                                (node instanceof StackPane && "hint-label".equals(((StackPane) node).getChildren().get(0).getUserData()))
-                );
-                javafx.scene.text.Text hint = new javafx.scene.text.Text("↻" + numClicks);
-                hint.setStyle("-fx-font-size: 14px; -fx-fill: red;");
-                hint.setUserData("hint-label");
-
-                StackPane hintWrapper = new StackPane(hint);
-                hintWrapper.setAlignment(Pos.TOP_RIGHT);
-
-                pane.getChildren().add(hintWrapper);
-            }
-        }
-    }
-
-    private boolean isSameOrientation(Tile tile, int current, int target) {
-        String type = tile.getType();
-        switch (type) {
-            case "I":
-                return (current % 180) == (target % 180);
-            case "X":
-                return true;
-            default:
-                return current == target;
-        }
-    }
 
     private void checkVictory() {
         for (int r = 0; r < model.getRows(); r++) {

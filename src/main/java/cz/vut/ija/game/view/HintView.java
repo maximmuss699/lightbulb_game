@@ -151,10 +151,19 @@ public class HintView extends GridPane {
                 int target = model.getSolutionRotations()[r][c];
                 int diff = (target - current + 360) % 360;
                 int clicks = diff / 90;
-                if (isSameOrientation(tile, current, target)) {
+                // For straight 'I' tiles, only parity of rotations matters
+                if ("I".equals(tile.getType())) {
+                    clicks = clicks % 2;
+                }
+                // Otherwise, apply symmetry check
+                else if (isSameOrientation(tile, current, target)) {
                     clicks = 0;
                 }
-                tileHints[r][c].setText("↻" + clicks);
+                if (clicks > 0) {
+                    tileHints[r][c].setText("↻" + clicks);
+                } else {
+                    tileHints[r][c].setText("");
+                }
             }
         }
     }
