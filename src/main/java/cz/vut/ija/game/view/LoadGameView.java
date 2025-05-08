@@ -11,6 +11,8 @@ import javafx.scene.layout.HBox;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.function.Consumer;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 /**
  * Screen for selecting saved game to load.
@@ -42,9 +44,26 @@ public class LoadGameView extends BorderPane {
                 } else {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String date = sdf.format(save.getSaveDate());
+                    String boardSize = String.valueOf(save.getBoardSize());
                     String status = save.isCompleted() ? "Completed" : "In Progress";
-                    setText(String.format("%s - %s - %s - %d moves", 
-                            date, save.getBoardSize(), status, save.getMoves().size()));
+                    String moves = save.getMoves().size() + " moves";
+
+                    // separate text elements for each part of the save info and set different colors
+                    Text tDate = new Text(date + " - ");
+                    tDate.setStyle("-fx-fill: white;");
+
+                    Text tBoard = new Text(boardSize + " - ");
+                    tBoard.setStyle("-fx-fill: #00eaff;");
+
+                    Text tStatus = new Text(status + " - ");
+                    tStatus.setStyle("-fx-fill: #ff4ecd;");
+
+                    Text tMoves = new Text(moves);
+                    tMoves.setStyle("-fx-fill: #ffffff;");
+
+                    TextFlow flow = new TextFlow(tDate, tBoard, tStatus, tMoves);
+                    setGraphic(flow);
+                    setText(null);
                 }
             }
         });

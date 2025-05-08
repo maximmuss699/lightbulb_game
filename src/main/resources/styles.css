@@ -120,9 +120,13 @@
 
 /* The board area: semi-opaque dark plate */
 .board-view {
-    -fx-background-color: rgba(20, 20, 20, 0.9);
+    -fx-background-color: #111111;
     -fx-padding: 10px;
-    -fx-border-color: #444444; /* dark gray border */
+    -fx-border-color: linear-gradient(
+            to right,
+            #ff4ecd 0%,
+            #00eaff 100%
+    );
     -fx-border-width: 3px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
@@ -153,7 +157,7 @@
 }
 
 .slider {
-    -fx-padding: 8 0 8 0;
+    -fx-padding: 8 0 0 0;
     -fx-background-color: transparent;
 }
 
@@ -200,8 +204,44 @@
 
 .save-list .list-cell:selected, .save-list .list-cell:focused {
     -fx-background-color: #23234d;
-    -fx-text-fill: #00eaff;
+    -fx-text-fill: inherit !important;
     -fx-effect: dropshadow(gaussian, #ff4ecd, 8, 0.4, 0, 0);
+}
+
+.save-list .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 2px;
+}
+
+.save-list .scroll-bar:vertical .thumb {
+    -fx-background-color: linear-gradient(
+            to bottom,
+            #ff4ecd 0%,
+            #ffffff 100%
+    );
+    -fx-background-radius: 6px;
+    -fx-pref-width: 18px;
+}
+
+.save-list .scroll-bar:horizontal .thumb {
+    -fx-background-color: linear-gradient(
+            to right,
+            #ff4ecd 0%,
+            #ffffff 100%
+    );
+    -fx-background-radius: 6px;
+    -fx-pref-height: 18px;
+}
+
+.save-list .scroll-bar .track {
+    -fx-background-color: #23234d;
+    -fx-background-radius: 6px;
+}
+
+.save-list .scroll-bar .increment-button,
+.save-list .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 .cyberpunk-label {
@@ -235,4 +275,16 @@
 .cyberpunk-combo .list-cell:selected, .cyberpunk-combo .list-cell:focused {
     -fx-background-color: #18182a;
     -fx-text-fill: #00eaff;
+}
+
+.game-button {
+    -fx-background-color: #444444;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+}
+
+.game-button:hover {
+    -fx-background-color: #555555;
 }

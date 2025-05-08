@@ -46,7 +46,7 @@ public class GameModeSelectView extends VBox {
         spacer.setPrefHeight(25);
 
         // Back button
-        backButton = new Button("BACK");
+        backButton = new Button("Back");
         backButton.getStyleClass().add("menu-button");
         backButton.setPrefWidth(200);
 

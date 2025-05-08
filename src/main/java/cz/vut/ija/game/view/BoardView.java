@@ -25,7 +25,7 @@ public class BoardView extends GridPane implements BoardObserver {
     // Flag to prevent showing victory dialog multiple times
     private boolean victoryShown = false;
 
-    private static final int TILE_SIZE = 80;
+    private static final int TILE_SIZE = 75;
 
     // Images for wires
     private final Image empty_tile = new Image(getClass().getResourceAsStream("/emptytile/empty_tile.png"));
@@ -91,9 +91,8 @@ public class BoardView extends GridPane implements BoardObserver {
         hintButton.setOnAction(e -> hintWindow.show());
 
         // apply a style to the buttons
-        String btnStyle = "-fx-background-color: #444444; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;";
-        solveButton.setStyle(btnStyle);
-        hintButton.setStyle(btnStyle);
+        solveButton.getStyleClass().add("game-button");
+        hintButton.getStyleClass().add("game-button");
 
         // Arrange buttons horizontally with spacing
         HBox buttonBox = new HBox(10, solveButton, hintButton);

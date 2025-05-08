@@ -51,12 +51,13 @@ public class ReplayView extends BorderPane {
         moveSlider = new Slider(0, save.getMoves().size(), 0);
         moveSlider.setShowTickMarks(true);
         moveSlider.setShowTickLabels(true);
-        moveSlider.setMajorTickUnit(Math.max(1, save.getMoves().size() / 10));
-        moveSlider.setMinorTickCount(1);
+        moveSlider.setMajorTickUnit(1);
+        moveSlider.setMinorTickCount(0);
+        moveSlider.setBlockIncrement(1);
         moveSlider.setSnapToTicks(true);
 
         int gridSize = board.getRows();
-        double cellSize = 80;
+        double cellSize = 75;
         moveSlider.setPrefWidth(gridSize * cellSize);
 
         moveSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -75,7 +76,10 @@ public class ReplayView extends BorderPane {
         // Buttons
         playGameButton = new Button("Continue from this move");
         playGameButton.setDisable(save.isCompleted()); // Zakázat pro dokončené hry
+        playGameButton.getStyleClass().add("game-button");
+
         backButton = new Button("Back to Menu");
+        backButton.getStyleClass().add("game-button");
 
         playGameButton.setOnAction(e -> {
             if (onPlayGameAtMove != null) {
