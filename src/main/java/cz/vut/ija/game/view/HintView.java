@@ -105,8 +105,9 @@ public class HintView extends GridPane {
 
                 Text hint = new Text();
                 hint.getStyleClass().add("hint-label");
-                hint.setStyle("-fx-fill: red;");
-                StackPane.setAlignment(hint, Pos.TOP_RIGHT);
+                hint.setStyle("-fx-fill: white; -fx-font-size: 36px; -fx-font-weight: bold; -fx-stroke: black; -fx-stroke-width: 1.5px;");
+                StackPane.setAlignment(hint, Pos.CENTER);
+
                 tileHints[r][c] = hint;
                 pane.getChildren().add(hint);
 
