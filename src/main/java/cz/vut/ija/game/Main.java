@@ -191,7 +191,7 @@ public class Main extends Application implements SettingsChangeListener {
 
         // Set up event handlers for replay buttons
         replayView.setOnPlayGameAtMove(moveIndex -> continueGameFromMove(save, moveIndex));
-        replayView.setOnBackToMenu(this::showMainMenu);
+        replayView.setOnBackToMenu(() -> showMainMenu());
 
         root.setCenter(replayView);
     }

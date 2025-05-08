@@ -63,7 +63,12 @@ public class BoardView extends GridPane implements BoardObserver {
         simulator = new GameSimulator(model);
 
         // Initialize hint preview (informative mode)
-        this.hintWindow = new HintView(model);
+        if (model.getSolutionRotations() != null) {
+            this.hintWindow = new HintView(model);
+        } else {
+            this.hintWindow = null;
+        }
+
 
         // Build the grid of buttons
         buildGrid();
@@ -207,7 +212,11 @@ public class BoardView extends GridPane implements BoardObserver {
         // recalculate the powered state
         simulator.propagate();
         applyPowerStyles();
-        hintWindow.refreshHints();
+
+        if (hintWindow != null) {
+            hintWindow.refreshHints();
+        }
+
         checkVictory();
     }
 
