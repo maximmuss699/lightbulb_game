@@ -45,6 +45,10 @@ public class GameSaveService {
             }
         }
 
+        if (board.getSolutionRotations() != null) {
+            save.setSolutionRotations(board.getSolutionRotations());
+        }
+
         save.setInitialBoardTypes(types);
         save.setInitialBoardRotations(rotations);
 
@@ -151,6 +155,10 @@ public class GameSaveService {
         for (int i = 0; i <= moveIndex && i < moves.size(); i++) {
             GameSave.GameMove move = moves.get(i);
             board.setTileRotation(move.getRow(), move.getCol(), move.getNewRotation());
+        }
+
+        if (save.getSolutionRotations() != null) {
+            board.setSolutionRotations(save.getSolutionRotations());
         }
 
         return board;

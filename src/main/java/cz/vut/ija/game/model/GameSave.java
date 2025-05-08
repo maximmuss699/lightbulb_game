@@ -24,6 +24,8 @@ public class GameSave implements Serializable {
     private String[][] initialBoardTypes;  
     private int[][] initialBoardRotations;
 
+    private int[][] solutionRotations;
+
     private List<GameMove> moves;
 
     public GameSave() {
@@ -116,4 +118,17 @@ public class GameSave implements Serializable {
         moves.add(new GameMove(row, col, oldRotation, newRotation));
     }
 
+    /**
+     * Gets the solution rotations for this game save.
+     */
+    public int[][] getSolutionRotations() {
+        return solutionRotations;
+    }
+
+    /**
+     * Sets the solution rotations for this game save.
+     */
+    public void setSolutionRotations(int[][] solutionRotations) {
+        this.solutionRotations = solutionRotations;
+    }
 }
