@@ -144,4 +144,17 @@ public class GameBoard {
         int c = p.getCol();
         return r >= 0 && r < rows && c >= 0 && c < cols;
     }
+
+    /**
+     * Returns the number of 90° right-click rotations needed to bring the tile at (row, col)
+     * from its current rotation to the solved rotation.
+     * If solutionRotations is not set, returns 0.
+     */
+    public int getRequiredClicks(int row, int col) {
+        if (solutionRotations == null) return 0;
+        int target = solutionRotations[row][col];
+        int current = tiles[row][col].getRotation();
+        int diff = (target - current + 360) % 360;
+        return diff / 90;
+    }
 }

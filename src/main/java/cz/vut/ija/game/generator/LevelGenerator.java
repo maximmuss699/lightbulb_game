@@ -1,6 +1,8 @@
 package cz.vut.ija.game.generator;
 
 import cz.vut.ija.game.model.*;
+import cz.vut.ija.game.model.BulbTile;
+import cz.vut.ija.game.model.TTile;
 import java.util.*;
 import java.util.Collections;
 import java.util.ArrayDeque;
@@ -64,6 +66,22 @@ public class LevelGenerator {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 solRots[r][c] = solution[r][c].getRotation();
+            }
+        }
+        // Rotate every bulb tile's solution orientation by 180 degrees
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (solution[r][c] instanceof BulbTile) {
+                    solRots[r][c] = (solRots[r][c] + 180) % 360;
+                }
+            }
+        }
+        // Rotate every T-tile's solution orientation by 270 degrees
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (solution[r][c] instanceof TTile) {
+                    solRots[r][c] = (solRots[r][c] + 270) % 360;
+                }
             }
         }
         board.setSolutionRotations(solRots);

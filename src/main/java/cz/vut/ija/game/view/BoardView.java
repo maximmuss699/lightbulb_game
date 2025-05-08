@@ -1,5 +1,9 @@
 package cz.vut.ija.game.view;
 
+import cz.vut.ija.game.view.HintView;
+import cz.vut.ija.game.view.TileClickEvent;
+import cz.vut.ija.game.view.GameWinEvent;
+
 import cz.vut.ija.game.model.SourceTile;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +18,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
 import cz.vut.ija.game.logic.GameSimulator;
 import cz.vut.ija.game.model.Position;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
 
 public class BoardView extends GridPane implements BoardObserver {
     private final GameBoard model;
@@ -21,6 +27,7 @@ public class BoardView extends GridPane implements BoardObserver {
     private final StackPane[][] tilePanes;
     private final ImageView[][] tileImages;
     private final Button solveButton;
+    private final HintView hintWindow;
 
     private static final int TILE_SIZE = 80;
 
@@ -63,6 +70,8 @@ public class BoardView extends GridPane implements BoardObserver {
 
         // Initialize the power simulator
         simulator = new GameSimulator(model);
+        // Initialize hint preview (informative mode)
+        this.hintWindow = new HintView(model);
 
         // Build the grid of buttons
         buildGrid();
@@ -71,15 +80,22 @@ public class BoardView extends GridPane implements BoardObserver {
         simulator.propagate();
         applyPowerStyles();
 
-        // add Solve button
+        // add control buttons
         solveButton = new Button("Solve");
         solveButton.setOnAction(e -> autoSolve());
-        // place below the grid: span across all columns
-        this.add(solveButton, 0, model.getRows(), model.getCols(), 1);
-
         Button hintButton = new Button("Show Hints");
-        hintButton.setOnAction(e -> showHintOverlay());
-        this.add(hintButton, 0, model.getRows() + 1, model.getCols(), 1);
+        hintButton.setOnAction(e -> hintWindow.show());
+        // Style buttons (dark background, white text)
+        String btnStyle = "-fx-background-color: #444444; -fx-text-fill: white;"
+                        + " -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;";
+        solveButton.setStyle(btnStyle);
+        hintButton.setStyle(btnStyle);
+        // Arrange buttons horizontally with spacing
+        HBox buttonBox = new HBox(10, solveButton, hintButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10, 0, 0, 0));
+        // Place buttonBox below the grid
+        this.add(buttonBox, 0, model.getRows(), model.getCols(), 1);
     }
 
     private void buildGrid() {
@@ -181,6 +197,7 @@ public class BoardView extends GridPane implements BoardObserver {
         // recalculate the powered state
         simulator.propagate();
         applyPowerStyles();
+        hintWindow.refreshHints();
         checkVictory();
     }
 
@@ -219,6 +236,8 @@ public class BoardView extends GridPane implements BoardObserver {
         }
         simulator.propagate();
         applyPowerStyles();
+
+        hintWindow.refreshHints();
     }
 
     /** Show overlay with number of rotations needed for each tile. */
@@ -286,5 +305,6 @@ public class BoardView extends GridPane implements BoardObserver {
 
         // Trigger return to the main menu
         fireEvent(new GameWinEvent());
+        hintWindow.close();
     }
 }

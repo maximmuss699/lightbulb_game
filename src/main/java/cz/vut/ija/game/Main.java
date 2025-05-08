@@ -5,6 +5,8 @@ import cz.vut.ija.game.model.GameSave;
 import cz.vut.ija.game.service.GameSaveManager;
 import cz.vut.ija.game.service.GameSaveService;
 import cz.vut.ija.game.view.*;
+import cz.vut.ija.game.view.HintView;
+import cz.vut.ija.game.view.TileClickEvent;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -44,6 +46,7 @@ public class Main extends Application implements SettingsChangeListener {
     private DifficultySelectView difficultyView;
     private TimeSelectView timeSelectView;
     private CustomGameView customGameView;
+    private HintView hintView;
 
     /**
      * Holds the active GameController instance responsible for coordinating between the model and the view.
@@ -357,7 +360,8 @@ public class Main extends Application implements SettingsChangeListener {
 
         gamePane.setBottom(bottomBar);
         root.setCenter(gamePane);
-    }
+        // Show hint preview window
+        }
 
     /**
      * Standard Java main method that launches the JavaFX application.
