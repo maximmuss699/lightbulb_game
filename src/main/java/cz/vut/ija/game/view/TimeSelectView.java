@@ -23,14 +23,22 @@ import javafx.scene.layout.Region;
  * Screen for selecting the amount of time in timed mode.
  */
 public class TimeSelectView extends VBox {
-    /** Dropdown for selecting time limit. */
+    /**
+     * Dropdown for selecting time limit.
+     */
     private final ComboBox<Integer> timeLimit;
-    /** Button to continue with current settings. */
+    /**
+     * Button to continue with current settings.
+     */
     private final Button continueButton;
-    /** Button to go back to previous screen. */
+    /**
+     * Button to go back to previous screen.
+     */
     private final Button backButton;
 
-    /** Listener for settings changes. */
+    /**
+     * Listener for settings changes.
+     */
     private SettingsChangeListener changeListener;
 
     /**

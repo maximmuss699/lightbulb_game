@@ -94,6 +94,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.11.2</version>
                 <configuration>
+                    <outputDirectory>${project.build.directory}/docs</outputDirectory>
                     <show>private</show>
                     <nohelp>true</nohelp>
                     <encoding>UTF-8</encoding>

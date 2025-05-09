@@ -12,7 +12,7 @@ Pro tyto účely je zde dostupný Makefile.
 ### Překlad
 > make
 
-Zavola mvn compile.
+Zavola `mvn compile`, `mvn javadoc:javadoc` a `mvn package`.
 
 ### Spuštění
 > make run
@@ -28,9 +28,13 @@ Vytvori validni jar archiv. Pro spusteni je ovsem potreba prilozit cestu ke vsem
 - javafx.fxml
 - javafx.graphics
 
+Pro spusteni projektu je doporuceno zavolat `make run`. 
+
 ### Dokumentace
 Dokumentace se vytvori po spusteni make, pripadne ji lze manualne vytvorit zavolanim:
 > mvn javadoc:javadoc
+
+Dokumentace se vytvori do slozky target/docs/apidocs.
 
 ## Implementace
 Jako základ byla použita logika aplikace z úkolu 1 a 2. UI je pak realizováno pomocí JavaFX.
