@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Implementation of the game board.
  * Used for creating new boards and different tiles.
  */
@@ -16,20 +16,46 @@ import java.util.List;
  * Notifies observers when tiles change.
  */
 public class GameBoard {
+    /**
+     * Number of rows and columns in the board.
+     */
     private final int rows, cols;
+    /**
+     * 2D array of tiles.
+     */
     private final Tile[][] tiles;
+    /**
+     * List of observers that will be notified of changes.
+     */
     private final List<BoardObserver> observers = new ArrayList<>();
 
-    // Stores the correct rotations for auto-solve
+    /**
+     * Stores the correct rotations for auto-solve.
+     */
     private int[][] solutionRotations;
 
+    /**
+     * Whether timed mode is enabled.
+     */
     private boolean timedModeEnabled;
+    /**
+     * Time limit in seconds.
+     */
     private int timeLimit;
+    /**
+     * Remaining time in seconds.
+     */
     private int remainingTime;
 
-    /** Public constructor: initialize every cell to a default WireTile */
+    /**
+     * Creates a new game board with specified dimensions.
+     *
+     * @param rows number of rows
+     * @param cols number of columns
+     */
     public GameBoard(int rows, int cols) {
-        this.rows = rows; this.cols = cols;
+        this.rows = rows;
+        this.cols = cols;
         tiles = new Tile[rows][cols];
         // make sure no cell is null!
         for (int r = 0; r < rows; r++) {
@@ -39,7 +65,11 @@ public class GameBoard {
         }
     }
 
-    /** Construct directly from a prebuilt Tile matrix */
+    /**
+     * Creates a game board from an existing tile array.
+     *
+     * @param initial 2D array of tiles
+     */
     public GameBoard(Tile[][] initial) {
         this.rows = initial.length;
         this.cols = initial[0].length;
@@ -51,35 +81,83 @@ public class GameBoard {
         }
     }
 
-    /** Store the solved rotations before scrambling. */
+    /**
+     * Sets the solution rotations for auto-solving.
+     *
+     * @param sol 2D array of correct rotations
+     */
     public void setSolutionRotations(int[][] sol) {
         this.solutionRotations = sol;
     }
 
-    /** Retrieve the stored solved rotations. */
+    /**
+     * Gets the solution rotations.
+     *
+     * @return 2D array of correct rotations
+     */
     public int[][] getSolutionRotations() {
         return solutionRotations;
     }
 
-    public int getRows() { return rows; }
-    public int getCols() { return cols; }
+    /**
+     * Gets the number of rows.
+     *
+     * @return number of rows
+     */
+    public int getRows() {
+        return rows;
+    }
 
+    /**
+     * Gets the number of columns.
+     *
+     * @return number of columns
+     */
+    public int getCols() {
+        return cols;
+    }
+
+    /**
+     * Gets the tile at specified position.
+     *
+     * @param row row index
+     * @param col column index
+     * @return the tile at position
+     */
     public Tile getTile(int row, int col) {
         return tiles[row][col];
     }
 
-    /** Rotate and notify observers (used by controller) */
+    /**
+     * Rotates a tile and notifies observers.
+     *
+     * @param row row index
+     * @param col column index
+     */
     public void rotateTile(int row, int col) {
         tiles[row][col].rotate();
         notifyObservers(row, col);
     }
 
-    /** Set rotation arbitrarily and notify (used by generator & undo) */
+    /**
+     * Sets a tile's rotation and notifies observers.
+     *
+     * @param row      row index
+     * @param col      column index
+     * @param rotation new rotation in degrees
+     */
     public void setTileRotation(int row, int col, int rotation) {
         tiles[row][col].setRotation(rotation);
         notifyObservers(row, col);
     }
-    
+
+    /**
+     * Sets the type of a tile.
+     *
+     * @param row  row index
+     * @param col  column index
+     * @param type tile type identifier
+     */
     public void setTileType(int row, int col, String type) {
         int originalRotation = tiles[row][col].getRotation();
 
@@ -113,11 +191,21 @@ public class GameBoard {
         notifyObservers(row, col);
     }
 
-
+    /**
+     * Adds an observer to be notified of changes.
+     *
+     * @param o observer to add
+     */
     public void addObserver(BoardObserver o) {
         observers.add(o);
     }
 
+    /**
+     * Notifies all observers of a change to a tile.
+     *
+     * @param row row of changed tile
+     * @param col column of changed tile
+     */
     private void notifyObservers(int row, int col) {
         for (BoardObserver o : observers) {
             o.tileChanged(row, col);
@@ -126,6 +214,7 @@ public class GameBoard {
 
     /**
      * Finds the position of the single SourceTile on the board.
+     *
      * @return the Position of the source, or null if none found
      */
     public Position findSource() {
@@ -141,6 +230,7 @@ public class GameBoard {
 
     /**
      * Checks if the given position lies within the board boundaries.
+     *
      * @param p the Position to check
      * @return true if p.row in [0, rows) and p.col in [0, cols)
      */
@@ -151,9 +241,11 @@ public class GameBoard {
     }
 
     /**
-     * Returns the number of 90° right-click rotations needed to bring the tile at (row, col)
-     * from its current rotation to the solved rotation.
-     * If solutionRotations is not set, returns 0.
+     * Gets the number of rotations needed to solve a tile.
+     *
+     * @param row row index
+     * @param col column index
+     * @return number of 90-degree rotations needed
      */
     public int getRequiredClicks(int row, int col) {
         if (solutionRotations == null) return 0;
@@ -163,27 +255,58 @@ public class GameBoard {
         return diff / 90;
     }
 
+
+    /**
+     * Checks if timed mode is enabled for this game.
+     *
+     * @return true if timed mode is enabled
+     */
     public boolean isTimedModeEnabled() {
         return timedModeEnabled;
     }
 
+    /**
+     * Sets whether timed mode is enabled.
+     *
+     * @param timedModeEnabled true to enable timed mode
+     */
     public void setTimedModeEnabled(boolean timedModeEnabled) {
         this.timedModeEnabled = timedModeEnabled;
     }
 
+    /**
+     * Gets the time limit in seconds.
+     *
+     * @return time limit in seconds
+     */
     public int getTimeLimit() {
         return timeLimit;
     }
 
+    /**
+     * Sets the time limit in seconds.
+     *
+     * @param timeLimit time limit in seconds
+     */
     public void setTimeLimit(int timeLimit) {
         this.timeLimit = timeLimit;
         this.remainingTime = timeLimit;
     }
 
+    /**
+     * Gets the remaining time in seconds.
+     *
+     * @return remaining time in seconds
+     */
     public int getRemainingTime() {
         return remainingTime;
     }
 
+    /**
+     * Sets the remaining time in seconds.
+     *
+     * @param remainingTime remaining time in seconds
+     */
     public void setRemainingTime(int remainingTime) {
         this.remainingTime = remainingTime;
     }

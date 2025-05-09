@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Replay view used for replaying a saved game. The user can check the moves he made.
  */
 package cz.vut.ija.game.view;
@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
+
 import java.util.function.Consumer;
 
 /**
@@ -26,25 +27,66 @@ import java.util.function.Consumer;
  * Allows to select a move and continue the game from that move.
  */
 public class ReplayView extends BorderPane {
+    /**
+     * The game save being replayed.
+     */
     private final GameSave save;
+    /**
+     * Service for loading saved games.
+     */
     private final GameSaveService saveService;
+    /**
+     * View displaying the board state.
+     */
     private BoardView boardView;
+    /**
+     * Slider for controlling which move to display.
+     */
     private Slider moveSlider;
+    /**
+     * Label showing current move information.
+     */
     private Label moveLabel;
+    /**
+     * Button to start playing from current move.
+     */
     private Button playGameButton;
+    /**
+     * Button to go back to main menu.
+     */
     private Button backButton;
+    /**
+     * Index of the current move being displayed.
+     */
     private int currentMoveIndex = -1;
 
+    /**
+     * Callback for when user wants to play from beginning.
+     */
     private Consumer<GameSave> onPlayGame;
+    /**
+     * Callback for when user wants to play from current move.
+     */
     private Consumer<Integer> onPlayGameAtMove;
+    /**
+     * Callback for when user wants to return to menu.
+     */
     private Runnable onBackToMenu;
 
+    /**
+     * Creates a new replay view for the given save.
+     *
+     * @param save the game save to replay
+     */
     public ReplayView(GameSave save) {
         this.save = save;
         this.saveService = new GameSaveService();
         setupView();
     }
 
+    /**
+     * Sets up the replay view UI components.
+     */
     private void setupView() {
         // Set up initial board
         GameBoard board = saveService.createBoardFromSave(save, -1);
@@ -112,20 +154,40 @@ public class ReplayView extends BorderPane {
         setBottom(bottomBox);
     }
 
+    /**
+     * Updates the board to show the state at the given move.
+     *
+     * @param moveIndex index of the move to display
+     */
     private void updateBoardToMove(int moveIndex) {
         GameBoard newBoard = saveService.createBoardFromSave(save, moveIndex);
         boardView = new BoardView(newBoard, true);
         setCenter(boardView);
     }
 
+    /**
+     * Sets the callback for playing game from beginning.
+     *
+     * @param callback function to call with save
+     */
     public void setOnPlayGame(Consumer<GameSave> callback) {
         this.onPlayGame = callback;
     }
 
+    /**
+     * Sets the callback for playing game from current move.
+     *
+     * @param callback function to call with move index
+     */
     public void setOnPlayGameAtMove(Consumer<Integer> callback) {
         this.onPlayGameAtMove = callback;
     }
 
+    /**
+     * Sets the callback for returning to main menu.
+     *
+     * @param callback function to call
+     */
     public void setOnBackToMenu(Runnable callback) {
         this.onBackToMenu = callback;
     }

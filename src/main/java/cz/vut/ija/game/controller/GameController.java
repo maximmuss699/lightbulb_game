@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Main class for handeling the logic between view and model.
  */
 package cz.vut.ija.game.controller;
@@ -27,26 +27,52 @@ import java.util.Deque;
  * Controller that glues the GameBoard (model) and BoardView (view) together.
  */
 public class GameController {
+    /**
+     * The game board model.
+     */
     private final GameBoard model;
+    /**
+     * The game board view.
+     */
     private final BoardView view;
 
-    // History stacks for undo/redo
+    /**
+     * Stack for storing commands that can be undone.
+     */
     private final Deque<Command> undoStack = new ArrayDeque<>();
+    /**
+     * Stack for storing commands that can be redone.
+     */
     private final Deque<Command> redoStack = new ArrayDeque<>();
+    /**
+     * Counter for tracking number of moves made.
+     */
     private int moveCount = 0;
 
-    // for saving game state
+    /**
+     * Manager for saving game state.
+     */
     private GameSaveManager saveManager;
 
+    /**
+     * Listener that receives time updates.
+     */
     private TimeUpdateListener timeUpdateListener;
 
-    // for timed mode
+    /**
+     * Timer for timed game mode.
+     */
     private Timeline timer;
 
     /**
-     * Listener for move count updates.
+     * Listener that receives move count updates.
      */
     public interface MoveListener {
+        /**
+         * Called when move count changes.
+         *
+         * @param newCount the new move count
+         */
         void onMove(int newCount);
     }
 
@@ -54,14 +80,24 @@ public class GameController {
      * Listener for receiving time updates
      */
     public interface TimeUpdateListener {
+        /**
+         * Called when time is updated.
+         *
+         * @param remainingTime the remaining time in seconds
+         */
         void onTimeUpdate(int remainingTime);
     }
 
-
+    /**
+     * Listener that receives move count updates.
+     */
     private MoveListener moveListener;
 
     /**
      * Constructs a controller for a board of the given size.
+     *
+     * @param rows number of rows
+     * @param cols number of columns
      */
     public GameController(int rows, int cols) {
         this(new GameBoard(rows, cols), false, 0);
@@ -69,6 +105,10 @@ public class GameController {
 
     /**
      * Constructs a controller for an existing GameBoard.
+     *
+     * @param board            existing game board
+     * @param timedModeEnabled whether timed mode is enabled
+     * @param timeLimit        time limit in seconds
      */
     public GameController(GameBoard board, boolean timedModeEnabled, int timeLimit) {
         // Initialize model and view
@@ -174,7 +214,9 @@ public class GameController {
     }
 
     /**
-     * @return the view managed by this controller
+     * Gets the view managed by this controller.
+     *
+     * @return the board view
      */
     public BoardView getView() {
         return view;
@@ -182,6 +224,8 @@ public class GameController {
 
     /**
      * Registers a listener to receive move count updates.
+     *
+     * @param listener the move listener
      */
     public void setOnMoveUpdated(MoveListener listener) {
         this.moveListener = listener;
@@ -226,6 +270,11 @@ public class GameController {
         this.saveManager = saveManager;
     }
 
+    /**
+     * Sets the time update listener.
+     *
+     * @param listener the listener to receive time updates
+     */
     public void setTimeUpdateListener(TimeUpdateListener listener) {
         this.timeUpdateListener = listener;
     }

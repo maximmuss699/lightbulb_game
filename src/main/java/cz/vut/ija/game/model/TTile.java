@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Implementation of the T shaped wire tile
  */
 package cz.vut.ija.game.model;
@@ -10,7 +10,9 @@ package cz.vut.ija.game.model;
 import java.util.Set;
 import java.util.EnumSet;
 
-/** T-shaped connector (all but one side). */
+/**
+ * T-shaped connector (all but one side).
+ */
 public class TTile extends Tile {
     @Override
     public String getType() {

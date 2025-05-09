@@ -10,11 +10,10 @@ MVN = mvn
 .PHONY: all compile run package clean zip
 
 
-all: compile
+all: compile javadoc
 
 compile:
 	$(MVN) compile
-
 run:
 	$(MVN) javafx:run
 
@@ -23,6 +22,11 @@ package:
 
 clean:
 	$(MVN) clean
+	$(MVN) javadoc:clean
+
+
+javadoc:
+	$(MVN) javadoc:javadoc
 
 zip: clean
 	zip xhladi26 src/* readme.txt pom.xml requirements.pdf

@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Interface for the Command pattern
  */
 package cz.vut.ija.game.command;

@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Class used for dynamically generating levels.
  */
 package cz.vut.ija.game.generator;
@@ -10,6 +10,7 @@ package cz.vut.ija.game.generator;
 import cz.vut.ija.game.model.*;
 import cz.vut.ija.game.model.BulbTile;
 import cz.vut.ija.game.model.TTile;
+
 import java.util.*;
 
 
@@ -22,11 +23,30 @@ import java.util.*;
  * 5) Scrambles tile rotations so no bulb is initially lit.
  */
 public class LevelGenerator {
+    /**
+     * Set of positions to check for reachability.
+     */
     private Set<Position> checkReach = new HashSet<>();
+    /**
+     * Bias factor for T-junctions - higher values create more T junctions.
+     */
     private static final double T_BIAS = 0.2;
+    /**
+     * Rows and columns in the generated board, and bulb count.
+     */
     private final int rows, cols, bulbCount;
+    /**
+     * Random number generator.
+     */
     private final Random rnd = new Random();
 
+    /**
+     * Creates a new level generator with specified parameters.
+     *
+     * @param rows      number of rows
+     * @param cols      number of columns
+     * @param bulbCount number of light bulbs
+     */
     public LevelGenerator(int rows, int cols, int bulbCount) {
         if (bulbCount < 1) throw new IllegalArgumentException("bulbCount>=1");
         this.rows = rows;
@@ -34,7 +54,11 @@ public class LevelGenerator {
         this.bulbCount = bulbCount;
     }
 
-    // Generate a puzzle with the specified number of bulbs
+    /**
+     * Generates a complete puzzle with a solution.
+     *
+     * @return the generated game board
+     */
     public GameBoard generatePuzzle() {
         int desiredT = Math.max(0, bulbCount - 1);
         Tile[][] solution;
@@ -106,7 +130,9 @@ public class LevelGenerator {
             for (int c = 0; c < cols; c++) {
                 Tile t = solution[r][c];
                 int orig = t.getRotation(), rot;
-                do { rot = rnd.nextInt(4)*90; } while (rot == orig);
+                do {
+                    rot = rnd.nextInt(4) * 90;
+                } while (rot == orig);
                 t.setRotation(rot);
                 board.setTileRotation(r, c, rot);
             }
@@ -115,6 +141,11 @@ public class LevelGenerator {
         return board;
     }
 
+    /**
+     * Generates the solution tiles for the board.
+     *
+     * @return 2D array of tiles
+     */
     private Tile[][] generateSolutionTiles() {
         Position start = new Position(rnd.nextInt(rows), rnd.nextInt(cols));
         System.out.println("Start cell: " + start);
@@ -128,18 +159,18 @@ public class LevelGenerator {
         if (visited.size() == rows * cols) {
             System.out.println("Check: all " + visited.size() + " cells are connected in a single tree.");
         } else {
-            System.out.println("Warning: only " + visited.size() + " out of " + (rows*cols) + " cells are connected!");
+            System.out.println("Warning: only " + visited.size() + " out of " + (rows * cols) + " cells are connected!");
         }
 
         // 2) Find leaf nodes (degree 1), excluding the start
-        List<Position> allLeaves   = new ArrayList<>();
+        List<Position> allLeaves = new ArrayList<>();
         List<Position> closeLeaves = new ArrayList<>();   // Manhattan ≤1
         for (Position p : conn.keySet()) {
             if (p.equals(start)) continue;
             if (conn.get(p).size() == 1) {
                 int dist = Math.abs(p.getRow() - start.getRow()) + Math.abs(p.getCol() - start.getCol());
                 if (dist <= 1) closeLeaves.add(p);
-                else           allLeaves.add(p);
+                else allLeaves.add(p);
             }
         }
         System.out.println("Far leaves   : " + allLeaves);
@@ -166,7 +197,8 @@ public class LevelGenerator {
         // Verify all bulbs are reachable from the carved tree
         Set<Position> reach = new HashSet<>();
         Deque<Position> dq = new ArrayDeque<>();
-        reach.add(start); dq.add(start);
+        reach.add(start);
+        dq.add(start);
         while (!dq.isEmpty()) {
             Position curPos = dq.poll();
             for (Side s : conn.getOrDefault(curPos, Collections.emptySet())) {
@@ -187,7 +219,8 @@ public class LevelGenerator {
         // Verify bulbs are reachable from the source in the final tree
         Set<Position> reachable = new HashSet<>();
         Deque<Position> queue = new ArrayDeque<>();
-        reachable.add(start); queue.add(start);
+        reachable.add(start);
+        queue.add(start);
         while (!queue.isEmpty()) {
             Position cur = queue.poll();
             for (Side s : conn.getOrDefault(cur, Collections.emptySet())) {
@@ -200,7 +233,10 @@ public class LevelGenerator {
         }
         boolean allReachable = true;
         for (Position b : bulbs) {
-            if (!reachable.contains(b)) { allReachable = false; break; }
+            if (!reachable.contains(b)) {
+                allReachable = false;
+                break;
+            }
         }
         if (allReachable) {
             System.out.println("Check passed: all bulbs reachable from source.");
@@ -246,7 +282,8 @@ public class LevelGenerator {
                     // Check connectivity from source to all bulbs
                     Set<Position> reach2 = new HashSet<>();
                     Deque<Position> dq2 = new ArrayDeque<>();
-                    reach2.add(start); dq2.add(start);
+                    reach2.add(start);
+                    dq2.add(start);
                     while (!dq2.isEmpty()) {
                         Position cur = dq2.poll();
                         for (Side ss : conn.getOrDefault(cur, Collections.emptySet())) {
@@ -316,8 +353,14 @@ public class LevelGenerator {
         return tiles;
     }
 
-    // Recursive DFS carve to generate the maze
-    private void dfsCarve(Position cur, Set<Position> visited, Map<Position,Set<Side>> conn) {
+    /**
+     * Performs a recursive depth-first search to carve paths through the board.
+     *
+     * @param cur     current position
+     * @param visited set of visited positions
+     * @param conn    map of positions to their connections
+     */
+    private void dfsCarve(Position cur, Set<Position> visited, Map<Position, Set<Side>> conn) {
         visited.add(cur);
         List<Side> dirs = new ArrayList<>(Arrays.asList(Side.values()));
         Collections.shuffle(dirs, rnd);
@@ -325,8 +368,8 @@ public class LevelGenerator {
             Position nxt = cur.step(s);
             if (!inBounds(nxt) || visited.contains(nxt)) continue;
             // vyříznout spojení (carve)
-            conn.computeIfAbsent(cur, k->new HashSet<>()).add(s);
-            conn.computeIfAbsent(nxt, k->new HashSet<>()).add(s.opposite());
+            conn.computeIfAbsent(cur, k -> new HashSet<>()).add(s);
+            conn.computeIfAbsent(nxt, k -> new HashSet<>()).add(s.opposite());
             if (visited.size() % 10 == 0) {
                 System.out.println("  DFS visited " + visited.size() + " cells...");
             }
@@ -334,8 +377,13 @@ public class LevelGenerator {
         }
     }
 
-    // Add T-junctions to some straight segments based on bias
-    private void addTBias(Map<Position,Set<Side>> conn, Set<Position> bulbs) {
+    /**
+     * Adds T-junction bias to connections.
+     *
+     * @param conn  map of positions to their connections
+     * @param bulbs set of bulb positions
+     */
+    private void addTBias(Map<Position, Set<Side>> conn, Set<Position> bulbs) {
         // Collect candidates for T-bias: straight segments not adjacent to bulbs
         List<Position> candidates = new ArrayList<>();
         for (Position p : new ArrayList<>(conn.keySet())) {
@@ -344,11 +392,15 @@ public class LevelGenerator {
             boolean nextToBulb = false;
             for (Side sNeighbour : sides) {
                 Position neighbour = p.step(sNeighbour);
-                if (bulbs.contains(neighbour)) { nextToBulb = true; break; }
+                if (bulbs.contains(neighbour)) {
+                    nextToBulb = true;
+                    break;
+                }
             }
             if (nextToBulb) continue;
             if (sides.size() == 2) {
-                Iterator<Side> it = sides.iterator(); Side a = it.next(), b = it.next();
+                Iterator<Side> it = sides.iterator();
+                Side a = it.next(), b = it.next();
                 if (a.opposite() == b) {
                     candidates.add(p);
                 }
@@ -365,7 +417,7 @@ public class LevelGenerator {
                 if (!sides.contains(s) && inBounds(p.step(s))) {
                     Position np = p.step(s);
                     conn.get(p).add(s);
-                    conn.computeIfAbsent(np, k->new HashSet<>()).add(s.opposite());
+                    conn.computeIfAbsent(np, k -> new HashSet<>()).add(s.opposite());
                     System.out.println("  T-branch: added at " + p + " towards " + np);
                     break;
                 }
@@ -373,31 +425,61 @@ public class LevelGenerator {
         }
     }
 
-    // Choose appropriate wire tile type based on required connections
+    /**
+     * Chooses an appropriate wire type based on needed connections.
+     *
+     * @param need set of sides that need connections
+     * @return the chosen wire tile
+     */
     private Tile chooseWire(Set<Side> need) {
         switch (need.size()) {
-            case 0: case 1: return new WireTile();
+            case 0:
+            case 1:
+                return new WireTile();
             case 2: {
-                Iterator<Side> it = need.iterator(); Side a = it.next(), b = it.next();
+                Iterator<Side> it = need.iterator();
+                Side a = it.next(), b = it.next();
                 return (a.opposite() == b) ? new WireTile() : new LTile();
             }
-            case 3: return new TTile();
-            case 4: return new XTile();
-            default: return new WireTile();
+            case 3:
+                return new TTile();
+            case 4:
+                return new XTile();
+            default:
+                return new WireTile();
         }
     }
 
-    // Compute the rotation needed to match desired connection sides
+    /**
+     * Computes the required rotation for a tile to match needed connections.
+     *
+     * @param needs set of sides that need connections
+     * @param t     the tile to rotate
+     * @return rotation in degrees
+     */
     private int computeRotation(Set<Side> needs, Tile t) {
         Set<Side> base;
         switch (t.getType()) {
-            case "I": base = EnumSet.of(Side.NORTH,Side.SOUTH); break;
-            case "L": base = EnumSet.of(Side.NORTH,Side.EAST); break;
-            case "T": base = EnumSet.of(Side.NORTH,Side.EAST,Side.SOUTH); break;
-            case "X": base = EnumSet.allOf(Side.class); break;
-            case "S": base = EnumSet.of(Side.SOUTH); break;
-            case "B": base = EnumSet.of(Side.NORTH); break;
-            default:  base = EnumSet.noneOf(Side.class);
+            case "I":
+                base = EnumSet.of(Side.NORTH, Side.SOUTH);
+                break;
+            case "L":
+                base = EnumSet.of(Side.NORTH, Side.EAST);
+                break;
+            case "T":
+                base = EnumSet.of(Side.NORTH, Side.EAST, Side.SOUTH);
+                break;
+            case "X":
+                base = EnumSet.allOf(Side.class);
+                break;
+            case "S":
+                base = EnumSet.of(Side.SOUTH);
+                break;
+            case "B":
+                base = EnumSet.of(Side.NORTH);
+                break;
+            default:
+                base = EnumSet.noneOf(Side.class);
         }
         for (int k = 0; k < 4; k++) {
             Set<Side> rotSides = EnumSet.noneOf(Side.class);
@@ -411,17 +493,31 @@ public class LevelGenerator {
         return 0;
     }
 
-    // Rotate a side clockwise by 90 degrees
+    /**
+     * Rotates a side 90 degrees clockwise.
+     *
+     * @param s the side to rotate
+     * @return the rotated side
+     */
     private Side rotate90(Side s) {
         switch (s) {
-            case NORTH: return Side.EAST;
-            case EAST:  return Side.SOUTH;
-            case SOUTH: return Side.WEST;
-            default:    return Side.NORTH;
+            case NORTH:
+                return Side.EAST;
+            case EAST:
+                return Side.SOUTH;
+            case SOUTH:
+                return Side.WEST;
+            default:
+                return Side.NORTH;
         }
     }
 
-    // Check if a position is within board bounds
+    /**
+     * Checks if a position is within the board boundaries.
+     *
+     * @param p position to check
+     * @return true if position is within bounds
+     */
     private boolean inBounds(Position p) {
         return p.getRow() >= 0 && p.getRow() < rows
                 && p.getCol() >= 0 && p.getCol() < cols;

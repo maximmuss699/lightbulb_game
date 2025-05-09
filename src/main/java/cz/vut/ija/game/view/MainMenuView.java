@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Main menu view. The app opens this view first.
  */
 package cz.vut.ija.game.view;
@@ -19,12 +19,26 @@ import javafx.scene.text.FontWeight;
  * The main menu screen. Used for entering settings, starting a new game, loading a game (replay) or exitting the app.
  */
 public class MainMenuView extends VBox {
-
+    /**
+     * Button for starting a new game.
+     */
     private final Button startGameButton;
+    /**
+     * Button for replaying saved games.
+     */
     private final Button replayButton;
+    /**
+     * Button for starting a custom game.
+     */
     private final Button customButton;
+    /**
+     * Button for exiting the application.
+     */
     private final Button exitButton;
 
+    /**
+     * Creates a new main menu view.
+     */
     public MainMenuView() {
         setAlignment(Pos.CENTER);
         setSpacing(20);
@@ -66,18 +80,38 @@ public class MainMenuView extends VBox {
         );
     }
 
+    /**
+     * Gets the start game button.
+     *
+     * @return the start game button
+     */
     public Button getStartGameButton() {
         return startGameButton;
     }
 
+    /**
+     * Gets the replay button.
+     *
+     * @return the replay button
+     */
     public Button getReplayButton() {
         return replayButton;
     }
 
+    /**
+     * Gets the custom game button.
+     *
+     * @return the custom game button
+     */
     public Button getCustomButton() {
         return customButton;
     }
 
+    /**
+     * Gets the exit button.
+     *
+     * @return the exit button
+     */
     public Button getExitButton() {
         return exitButton;
     }

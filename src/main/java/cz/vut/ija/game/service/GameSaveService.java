@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A service class used for creating game save containing board information, bulb count etc.
  */
 package cz.vut.ija.game.service;
@@ -10,6 +10,7 @@ package cz.vut.ija.game.service;
 import cz.vut.ija.game.model.GameBoard;
 import cz.vut.ija.game.model.GameSave;
 import cz.vut.ija.game.model.Tile;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,9 +20,14 @@ import java.util.List;
  * Service for creating, saving and loading game saves.
  */
 public class GameSaveService {
+    /**
+     * Directory for storing save files.
+     */
     private static final String SAVE_DIRECTORY = "saves";
 
-    // Creates a new save directory if it doesn't exist
+    /**
+     * Creates a new game save service. Creates save directory if it does not exist
+     */
     public GameSaveService() {
         File directory = new File(SAVE_DIRECTORY);
         if (!directory.exists()) {
@@ -30,7 +36,12 @@ public class GameSaveService {
     }
 
     /**
-     * Creates a new game save from the given board.
+     * Creates a new save from the current board state.
+     *
+     * @param board     the game board
+     * @param boardSize size of the board as string
+     * @param bulbCount number of light bulbs
+     * @return new game save
      */
     public GameSave createSaveFromBoard(GameBoard board, String boardSize, int bulbCount) {
         GameSave save = new GameSave();
@@ -65,7 +76,7 @@ public class GameSaveService {
     /**
      * Save the game to a file
      *
-     * @param gameSave game save to save
+     * @param gameSave  game save to save
      * @param completed was the game finished?
      */
     public void saveGame(GameSave gameSave, boolean completed) {
@@ -82,9 +93,10 @@ public class GameSaveService {
     }
 
     /**
-     * Loads a game from a file
+     * Loads a game from a file.
      *
-     * @param filename name of the file to load
+     * @param filename name of the save file
+     * @return loaded game save or null if failed
      */
     public GameSave loadGame(String filename) {
         File file = new File(SAVE_DIRECTORY, filename);
@@ -98,7 +110,9 @@ public class GameSaveService {
     }
 
     /**
-     * Returns a list of all save filenames in the saves directory.
+     * Gets a list of all save filenames.
+     *
+     * @return list of save filenames
      */
     public List<String> getAllSaveFilenames() {
         List<String> filenames = new ArrayList<>();
@@ -117,7 +131,9 @@ public class GameSaveService {
     }
 
     /**
-     * Loads all saves from the saves directory.
+     * Gets a list of all saved games.
+     *
+     * @return list of game saves
      */
     public List<GameSave> getAllSaves() {
         List<GameSave> saves = new ArrayList<>();
@@ -136,7 +152,7 @@ public class GameSaveService {
     /**
      * Recreates a GameBoard instance based on a previously saved game state
      *
-     * @param save GameSave object containing the saved game data
+     * @param save      GameSave object containing the saved game data
      * @param moveIndex the index of the last move to apply from the saved move history (0 is first move)
      * @return a GameBoard instance with all specified moves up to the given move index
      */
@@ -172,7 +188,10 @@ public class GameSaveService {
     }
 
     /**
-     * Generates a new filename for the given save.
+     * Generates a filename for a save.
+     *
+     * @param save the game save
+     * @return generated filename
      */
     private String generateFilename(GameSave save) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");

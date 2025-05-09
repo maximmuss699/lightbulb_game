@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view for selecting game mode - classic or timed mode.
  */
 package cz.vut.ija.game.view;
@@ -20,13 +20,27 @@ import javafx.scene.text.FontWeight;
  * Screen for selecting game mode - either timed or not timed.
  */
 public class GameModeSelectView extends VBox {
-
+    /**
+     * Button to select classic (untimed) mode.
+     */
     private final Button classicModeButton;
+    /**
+     * Button to select timed mode.
+     */
     private final Button timedModeButton;
+    /**
+     * Button to go back to previous screen.
+     */
     private final Button backButton;
 
+    /**
+     * Listener for settings changes.
+     */
     private SettingsChangeListener changeListener;
 
+    /**
+     * Creates a new game mode selection view.
+     */
     public GameModeSelectView() {
         setAlignment(Pos.CENTER);
         setSpacing(15);
@@ -68,7 +82,9 @@ public class GameModeSelectView extends VBox {
     }
 
     /**
-     * Sets the listener for the settings changes.
+     * Sets the settings change listener.
+     *
+     * @param listener the listener that will handle settings changes
      */
     public void setSettingsChangeListener(SettingsChangeListener listener) {
         this.changeListener = listener;
@@ -87,15 +103,29 @@ public class GameModeSelectView extends VBox {
         });
     }
 
-    // Getters
+    /**
+     * Gets the classic mode button.
+     *
+     * @return the classic mode button component
+     */
     public Button getClassicModeButton() {
         return classicModeButton;
     }
 
+    /**
+     * Gets the timed mode button.
+     *
+     * @return the timed mode button component
+     */
     public Button getTimedModeButton() {
         return timedModeButton;
     }
 
+    /**
+     * Gets the back button.
+     *
+     * @return the back button component
+     */
     public Button getBackButton() {
         return backButton;
     }

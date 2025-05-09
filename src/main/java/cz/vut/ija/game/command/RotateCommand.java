@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Implementation of the command interface
  */
 package cz.vut.ija.game.command;
@@ -13,10 +13,25 @@ import cz.vut.ija.game.model.GameBoard;
  * Rotates a single tile on the game board and supports undoing the rotation.
  */
 public class RotateCommand implements Command {
+    /**
+     * The game board to operate on.
+     */
     private final GameBoard board;
+    /**
+     * Row index of the tile to rotate.
+     */
     private final int row;
+    /**
+     * Column index of the tile to rotate.
+     */
     private final int col;
+    /**
+     * Rotation before executing the command.
+     */
     private final int beforeRotation;
+    /**
+     * Rotation after executing the command.
+     */
     private int afterRotation;
 
     /**
@@ -28,8 +43,8 @@ public class RotateCommand implements Command {
      */
     public RotateCommand(GameBoard board, int row, int col) {
         this.board = board;
-        this.row   = row;
-        this.col   = col;
+        this.row = row;
+        this.col = col;
         // Capture the current rotation before execution
         this.beforeRotation = board.getTile(row, col).getRotation();
     }

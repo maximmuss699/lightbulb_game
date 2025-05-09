@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Implementation of the powernode tile
  */
 package cz.vut.ija.game.model;
@@ -10,7 +10,10 @@ package cz.vut.ija.game.model;
 import java.util.Set;
 import java.util.EnumSet;
 
-/** The single power source tile (type "S"). */
+/**
+ * Power source tile that provides electricity to connected wires.
+ * This tile is the starting point for power propagation.
+ */
 public class SourceTile extends Tile {
     @Override
     public String getType() {

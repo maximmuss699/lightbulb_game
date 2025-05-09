@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view used for selecting an amount of time in timed mode.
  */
 package cz.vut.ija.game.view;
@@ -23,12 +23,19 @@ import javafx.scene.layout.Region;
  * Screen for selecting the amount of time in timed mode.
  */
 public class TimeSelectView extends VBox {
+    /** Dropdown for selecting time limit. */
     private final ComboBox<Integer> timeLimit;
+    /** Button to continue with current settings. */
     private final Button continueButton;
+    /** Button to go back to previous screen. */
     private final Button backButton;
 
+    /** Listener for settings changes. */
     private SettingsChangeListener changeListener;
 
+    /**
+     * Creates a new time selection view.
+     */
     public TimeSelectView() {
         setAlignment(Pos.CENTER);
         setSpacing(15);
@@ -79,19 +86,39 @@ public class TimeSelectView extends VBox {
         );
     }
 
-    // Getters
+
+    /**
+     * Sets the settings change listener.
+     *
+     * @param listener the listener that will handle settings changes
+     */
     public void setSettingsChangeListener(SettingsChangeListener listener) {
         this.changeListener = listener;
     }
 
+    /**
+     * Gets the time limit selector component.
+     *
+     * @return the time limit selector component
+     */
     public ComboBox<Integer> getTimeLimit() {
         return timeLimit;
     }
 
+    /**
+     * Gets the continue button.
+     *
+     * @return the continue button component
+     */
     public Button getContinueButton() {
         return continueButton;
     }
 
+    /**
+     * Gets the back button.
+     *
+     * @return the back button component
+     */
     public Button getBackButton() {
         return backButton;
     }

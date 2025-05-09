@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Implementation of the lightbulb tile.
  */
 package cz.vut.ija.game.model;
@@ -10,7 +10,10 @@ package cz.vut.ija.game.model;
 import java.util.Set;
 import java.util.EnumSet;
 
-/** A light bulb tile: connects in one direction to receive power. */
+/**
+ * Represents a light bulb tile on the game board.
+ * Light bulbs can be powered and light up when connected.
+ */
 public class BulbTile extends Tile {
     @Override
     public String getType() {

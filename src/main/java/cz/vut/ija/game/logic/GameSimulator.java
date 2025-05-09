@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Class used for simulation - e.g. finding the best solution possible
  */
 package cz.vut.ija.game.logic;
@@ -22,11 +22,18 @@ import java.util.Set;
  * Performs a flood-fill from the source tile, following matching connections.
  */
 public class GameSimulator {
+    /**
+     * The game board being simulated.
+     */
     private final GameBoard board;
+    /**
+     * Set of positions that have power.
+     */
     private final Set<Position> powered = new HashSet<>();
 
     /**
      * Constructs the simulator for the given game board.
+     *
      * @param board the game board model
      */
     public GameSimulator(GameBoard board) {
@@ -64,7 +71,11 @@ public class GameSimulator {
     }
 
     /**
-     * Returns true if the tile at (r,c) is powered after the last propagate().
+     * Checks if a tile at (r,c) is powered after the last propagate().
+     *
+     * @param r row index
+     * @param c column index
+     * @return true if tile is powered
      */
     public boolean isPowered(int r, int c) {
         return powered.contains(new Position(r, c));

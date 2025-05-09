@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view used for selecting a replay of a game.
  */
 package cz.vut.ija.game.view;
@@ -15,9 +15,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.function.Consumer;
+
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -25,11 +27,28 @@ import javafx.scene.text.TextFlow;
  * Screen for selecting saved game to load.
  */
 public class LoadGameView extends BorderPane {
+    /**
+     * List view displaying available saves.
+     */
     private ListView<GameSave> saveListView;
+    /**
+     * Button to load a selected game.
+     */
     private Button loadButton;
+    /**
+     * Button to go back to the previous screen.
+     */
     private Button backButton;
+    /**
+     * Callback for when a save is selected.
+     */
     private Consumer<GameSave> onSaveSelected;
 
+    /**
+     * Creates a new load game view.
+     *
+     * @param saves list of available game saves
+     */
     public LoadGameView(List<GameSave> saves) {
         setPadding(new Insets(20));
 
@@ -39,7 +58,7 @@ public class LoadGameView extends BorderPane {
         setTop(titleLabel);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         BorderPane.setMargin(titleLabel, new Insets(0, 0, 20, 0));
-        
+
         // A list of saved games
         saveListView = new ListView<>();
         saveListView.setCellFactory(param -> new javafx.scene.control.ListCell<GameSave>() {
@@ -77,7 +96,7 @@ public class LoadGameView extends BorderPane {
         saveListView.getItems().addAll(saves);
         saveListView.getStyleClass().add("save-list");
         setCenter(saveListView);
-        
+
         // Load and Back buttons
         loadButton = new Button("Load");
         loadButton.getStyleClass().add("menu-button");
@@ -90,7 +109,7 @@ public class LoadGameView extends BorderPane {
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(20, 0, 0, 0));
         setBottom(buttonBox);
-        
+
         // set up listeners for buttons
         saveListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             loadButton.setDisable(newVal == null);
@@ -105,11 +124,21 @@ public class LoadGameView extends BorderPane {
             }
         });
     }
-    
+
+    /**
+     * Sets the callback for when a save is selected.
+     *
+     * @param callback function to call with selected save
+     */
     public void setOnSaveSelected(Consumer<GameSave> callback) {
         this.onSaveSelected = callback;
     }
-    
+
+    /**
+     * Gets the back button.
+     *
+     * @return the back button
+     */
     public Button getBackButton() {
         return backButton;
     }

@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view for creating a custom game with custom parameters.
  */
 package cz.vut.ija.game.view;
@@ -24,16 +24,39 @@ import javafx.scene.text.FontWeight;
  * Settings screen. Used for customizing the game behavior.
  */
 public class CustomGameView extends VBox {
-
+    /**
+     * Board size selector dropdown.
+     */
     private final ComboBox<String> boardSizeSelector;
+    /**
+     * Light bulb count selector dropdown.
+     */
     private final ComboBox<Integer> bulbSelector;
+    /**
+     * Time limit selector dropdown.
+     */
     private final ComboBox<Integer> timeSelector;
+    /**
+     * Checkbox to enable timed mode.
+     */
     private final CheckBox timedModeCheckbox;
+    /**
+     * Button to start a game with selected settings.
+     */
     private final Button startGameButton;
+    /**
+     * Button to go back to the main menu.
+     */
     private final Button backButton;
 
+    /**
+     * Listener for settings changes.
+     */
     private SettingsChangeListener changeListener;
 
+    /**
+     * Creates a new custom game view.
+     */
     public CustomGameView() {
         setAlignment(Pos.CENTER);
         setSpacing(20);
@@ -128,14 +151,21 @@ public class CustomGameView extends VBox {
     }
 
     /**
-     * Game settings listener setter.
+     * Sets the settings change listener.
+     *
+     * @param listener the listener that will handle settings changes
      */
     public void setSettingsChangeListener(SettingsChangeListener listener) {
         this.changeListener = listener;
     }
 
     /**
-     * Updates the UI based on the passed values.
+     * Updates the UI based on the provided settings.
+     *
+     * @param size      board size string (e.g. "5×5")
+     * @param bulbCount number of light bulbs
+     * @param timedMode whether timed mode is enabled
+     * @param timeLimit time limit in seconds
      */
     public void updateUI(String size, int bulbCount, boolean timedMode, int timeLimit) {
         boardSizeSelector.setValue(size);
@@ -145,26 +175,56 @@ public class CustomGameView extends VBox {
         timeSelector.setDisable(!timedMode);
     }
 
+    /**
+     * Gets the board size selector dropdown.
+     *
+     * @return the board size selector component
+     */
     public ComboBox<String> getBoardSizeSelector() {
         return boardSizeSelector;
     }
 
+    /**
+     * Gets the light bulb count selector dropdown.
+     *
+     * @return the light bulb selector component
+     */
     public ComboBox<Integer> getBulbSelector() {
         return bulbSelector;
     }
 
+    /**
+     * Gets the time selector dropdown.
+     *
+     * @return the time selector component
+     */
     public ComboBox<Integer> getTimeSelector() {
         return timeSelector;
     }
 
+    /**
+     * Gets the timed mode checkbox.
+     *
+     * @return the timed mode checkbox component
+     */
     public CheckBox getTimedModeCheckbox() {
         return timedModeCheckbox;
     }
 
+    /**
+     * Gets the start game button.
+     *
+     * @return the start game button component
+     */
     public Button getStartGameButton() {
         return startGameButton;
     }
 
+    /**
+     * Gets the back button.
+     *
+     * @return the back button component
+     */
     public Button getBackButton() {
         return backButton;
     }

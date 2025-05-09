@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view that opens up a new window with a hint for each tile.
  */
 package cz.vut.ija.game.view;
@@ -25,32 +25,94 @@ import javafx.stage.Stage;
  * displays the number of rotations needed for each tile to reach its correct orientation.
  */
 public class HintView extends GridPane {
+    /**
+     * The game board model.
+     */
     private final GameBoard model;
+    /**
+     * Game simulator for checking connections.
+     */
     private final GameSimulator simulator;
+    /**
+     * Grid of panes for placing tiles.
+     */
     private final StackPane[][] tilePanes;
+    /**
+     * Grid of image views for tile images.
+     */
     private final ImageView[][] tileImages;
+    /**
+     * Grid of text labels for hints.
+     */
     private final Text[][] tileHints;
+    /**
+     * Button to close the hint window.
+     */
     private final Button closeButton;
+    /**
+     * Window for displaying hints.
+     */
     private Stage stage;
 
+    /**
+     * Size of each tile in pixels.
+     */
     private static final int TILE_SIZE = 80;
 
-    // Unlit images
-    private final Image emptyTile = new Image(getClass().getResourceAsStream("/emptytile/empty_tile.png"));
-    private final Image wireI = new Image(getClass().getResourceAsStream("/wires/I_unlit.png"));
-    private final Image wireL = new Image(getClass().getResourceAsStream("/wires/L_unlit.png"));
-    private final Image wireT = new Image(getClass().getResourceAsStream("/wires/T_unlit.png"));
-    private final Image wireX = new Image(getClass().getResourceAsStream("/wires/X_unlit.png"));
-    private final Image bulb = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_unlit.png"));
-    private final Image source = new Image(getClass().getResourceAsStream("/powernode/power_node.png"));
-
-    // Lit images
+    /**
+     * Image for empty tile.
+     */
+    private final Image empty_tile = new Image(getClass().getResourceAsStream("/emptytile/empty_tile.png"));
+    /**
+     * Image for I wire when lit.
+     */
     private final Image wireI_lit = new Image(getClass().getResourceAsStream("/wires/I_lit.png"));
+    /**
+     * Image for I wire when unlit.
+     */
+    private final Image wireI_unlit = new Image(getClass().getResourceAsStream("/wires/I_unlit.png"));
+    /**
+     * Image for L wire when lit.
+     */
     private final Image wireL_lit = new Image(getClass().getResourceAsStream("/wires/L_lit.png"));
+    /**
+     * Image for L wire when unlit.
+     */
+    private final Image wireL_unlit = new Image(getClass().getResourceAsStream("/wires/L_unlit.png"));
+    /**
+     * Image for T wire when lit.
+     */
     private final Image wireT_lit = new Image(getClass().getResourceAsStream("/wires/T_lit.png"));
+    /**
+     * Image for T wire when unlit.
+     */
+    private final Image wireT_unlit = new Image(getClass().getResourceAsStream("/wires/T_unlit.png"));
+    /**
+     * Image for X wire when lit.
+     */
     private final Image wireX_lit = new Image(getClass().getResourceAsStream("/wires/X_lit.png"));
-    private final Image bulb_lit  = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_lit.png"));
+    /**
+     * Image for X wire when unlit.
+     */
+    private final Image wireX_unlit = new Image(getClass().getResourceAsStream("/wires/X_unlit.png"));
+    /**
+     * Image for light bulb when lit.
+     */
+    private final Image lightbulb_lit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_lit.png"));
+    /**
+     * Image for light bulb when unlit.
+     */
+    private final Image lightbulb_unlit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_unlit.png"));
+    /**
+     * Image for power node.
+     */
+    private final Image power_node = new Image(getClass().getResourceAsStream("/powernode/power_node.png"));
 
+    /**
+     * Creates a new hint view for the provided game board.
+     *
+     * @param model the game board to show hints for
+     */
     public HintView(GameBoard model) {
         this.model = model;
         this.simulator = new GameSimulator(model);
@@ -75,17 +137,24 @@ public class HintView extends GridPane {
 
         closeButton = new Button("Close Preview");
         closeButton.setStyle(
-            "-fx-background-color: #444444; " +
-            "-fx-text-fill: white; " +
-            "-fx-font-size: 14px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-background-radius: 5px;"
+                "-fx-background-color: #444444; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-font-weight: bold; " +
+                        "-fx-background-radius: 5px;"
         );
         closeButton.setOnAction(e -> stage.close());
         add(closeButton, 0, rows, cols, 1);
     }
 
-    /** Returns true if current and target rotations are effectively the same for symmetric tiles. */
+    /**
+     * Checks if current and target rotations are effectively the same for symmetric tiles.
+     *
+     * @param tile    the tile to check
+     * @param current current rotation
+     * @param target  target rotation
+     * @return true if rotations are functionally equivalent
+     */
     private boolean isSameOrientation(Tile tile, int current, int target) {
         String type = tile.getType();
         switch (type) {
@@ -98,6 +167,9 @@ public class HintView extends GridPane {
         }
     }
 
+    /**
+     * Builds the grid of tile images and hint text.
+     */
     private void buildGrid() {
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
@@ -125,6 +197,9 @@ public class HintView extends GridPane {
         }
     }
 
+    /**
+     * Updates all tile images based on their power status.
+     */
     private void applyPowerStyles() {
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
@@ -135,21 +210,43 @@ public class HintView extends GridPane {
         }
     }
 
+    /**
+     * Updates a tile image based on its type and power status.
+     *
+     * @param imageView the image view to update
+     * @param tile      the tile to display
+     * @param powered   whether the tile is powered
+     */
     private void updateTileImage(ImageView imageView, Tile tile, boolean powered) {
         String type = tile.getType();
         switch (type) {
-            case "I": imageView.setImage(powered ? wireI_lit : wireI); break;
-            case "L": imageView.setImage(powered ? wireL_lit : wireL); break;
-            case "T": imageView.setImage(powered ? wireT_lit : wireT); break;
-            case "X": imageView.setImage(powered ? wireX_lit : wireX); break;
-            case "S": imageView.setImage(source); break;
-            case "B": imageView.setImage(powered ? bulb_lit : bulb); break;
-            default:  imageView.setImage(emptyTile);
+            case "I":
+                imageView.setImage(powered ? wireI_lit : wireI_unlit);
+                break;
+            case "L":
+                imageView.setImage(powered ? wireL_lit : wireL_unlit);
+                break;
+            case "T":
+                imageView.setImage(powered ? wireT_lit : wireT_unlit);
+                break;
+            case "X":
+                imageView.setImage(powered ? wireX_lit : wireX_unlit);
+                break;
+            case "S":
+                imageView.setImage(power_node);
+                break;
+            case "B":
+                imageView.setImage(powered ? lightbulb_lit : lightbulb_unlit);
+                break;
+            default:
+                imageView.setImage(empty_tile);
         }
         imageView.setRotate(tile.getRotation());
     }
 
-    /** Refreshes click counts and updates tile states. */
+    /**
+     * Refreshes click counts and updates tile states.
+     */
     public void refreshHints() {
         simulator.propagate();
         applyPowerStyles();
@@ -186,7 +283,9 @@ public class HintView extends GridPane {
         }
     }
 
-    /** Shows or re-shows the hint preview window, refreshing its contents. */
+    /**
+     * Shows or re-shows the hint preview window, refreshing its contents.
+     */
     public void show() {
         // Refresh tile states and hint counts before showing
         refreshHints();
@@ -201,6 +300,10 @@ public class HintView extends GridPane {
         stage.show();
         stage.toFront();
     }
+
+    /**
+     * Closes the hint window.
+     */
     public void close() {
         if (stage != null) {
             stage.hide();

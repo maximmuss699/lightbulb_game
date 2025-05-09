@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view for selecting difficulty.
  */
 package cz.vut.ija.game.view;
@@ -20,12 +20,26 @@ import javafx.scene.text.FontWeight;
  * Screen for selecting game difficulty level.
  */
 public class DifficultySelectView extends VBox {
-
+    /**
+     * Button for easy difficulty.
+     */
     private final Button easyButton;
+    /**
+     * Button for medium difficulty.
+     */
     private final Button mediumButton;
+    /**
+     * Button for hard difficulty.
+     */
     private final Button hardButton;
+    /**
+     * Button to go back to previous screen.
+     */
     private final Button backButton;
 
+    /**
+     * Creates a new difficulty select view.
+     */
     public DifficultySelectView() {
         setAlignment(Pos.CENTER);
         setSpacing(15);
@@ -72,19 +86,38 @@ public class DifficultySelectView extends VBox {
         );
     }
 
-    // Getters
+    /**
+     * Gets the easy difficulty button.
+     *
+     * @return the easy button component
+     */
     public Button getEasyButton() {
         return easyButton;
     }
 
+    /**
+     * Gets the medium difficulty button.
+     *
+     * @return the medium button component
+     */
     public Button getMediumButton() {
         return mediumButton;
     }
 
+    /**
+     * Gets the hard difficulty button.
+     *
+     * @return the hard button component
+     */
     public Button getHardButton() {
         return hardButton;
     }
 
+    /**
+     * Gets the back button.
+     *
+     * @return the back button component
+     */
     public Button getBackButton() {
         return backButton;
     }

@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * Main class. The app starts here.
  */
 package cz.vut.ija.game;
@@ -12,7 +12,6 @@ import cz.vut.ija.game.model.GameSave;
 import cz.vut.ija.game.service.GameSaveManager;
 import cz.vut.ija.game.service.GameSaveService;
 import cz.vut.ija.game.view.*;
-import cz.vut.ija.game.view.HintView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -38,33 +37,70 @@ import static cz.vut.ija.game.view.GameWinEvent.GAME_WIN;
  */
 public class Main extends Application implements SettingsChangeListener {
 
-    // Resolution of the window
+    /**
+     * Window height in pixels.
+     */
     private static final int WINDOW_WIDTH = 1000;
+    /**
+     * Window width in pixels.
+     */
     private static final int WINDOW_HEIGHT = 1000;
 
+    /**
+     * The main scene.
+     */
     private Scene scene;
+    /**
+     * Root pane for the scene.
+     */
     private BorderPane root;
 
-    // All the views
+    /**
+     * Main menu view.
+     */
     private MainMenuView mainMenuView;
+    /**
+     * View for selecting game mode.
+     */
     private GameModeSelectView gameModeView;
+    /**
+     * View for selecting difficulty level.
+     */
     private DifficultySelectView difficultyView;
+    /**
+     * View for selecting time settings.
+     */
     private TimeSelectView timeSelectView;
+    /**
+     * View for custom game configuration.
+     */
     private CustomGameView customGameView;
-    private HintView hintView;
 
     /**
-     * Holds the active GameController instance responsible for coordinating between the model and the view.
+     * Holds the active GameController instance responsible for coordinating between the model and the view
      */
     private GameController gameController;
+    /**
+     * Manager for saving and loading games.
+     */
     private GameSaveManager saveManager;
-    private Label moveLabel;
 
-    // Default settings
+    /**
+     * Current board size as string (e.g. "5×5").
+     */
     private String boardSize = "5×5";
+    /**
+     * Number of light bulbs to place on the board.
+     */
     private int bulbCount = 3;
+    /**
+     * Whether timed mode is enabled.
+     */
     private boolean timedModeEnabled = false;
-    private int timeLimit = 60; // default value in seconds
+    /**
+     * Time limit in seconds.
+     */
+    private int timeLimit = 60;
 
 
     /**
@@ -142,6 +178,9 @@ public class Main extends Application implements SettingsChangeListener {
         customGameView.getBackButton().setOnAction(e -> showMainMenu());
     }
 
+    /**
+     * Shows the main menu.
+     */
     private void showMainMenu() {
         if (gameController != null) {
             gameController.stopTimer();
@@ -149,23 +188,38 @@ public class Main extends Application implements SettingsChangeListener {
         root.setCenter(mainMenuView);
     }
 
+    /**
+     * Shows the game mode selection screen.
+     */
     private void showGameModeSelect() {
         root.setCenter(gameModeView);
     }
 
+    /**
+     * Shows the difficulty selection screen.
+     */
     private void showDifficultySelect() {
         root.setCenter(difficultyView);
     }
 
+    /**
+     * Shows the time selection screen.
+     */
     private void showTimeSelect() {
         root.setCenter(timeSelectView);
     }
 
+    /**
+     * Shows the settings screen.
+     */
     private void showSettings() {
         customGameView.updateUI(boardSize, bulbCount, timedModeEnabled, timeLimit);
         root.setCenter(customGameView);
     }
 
+    /**
+     * Shows the saved games screen.
+     */
     private void showSavedGames() {
         GameSaveService saveService = new GameSaveService();
 
@@ -199,7 +253,7 @@ public class Main extends Application implements SettingsChangeListener {
     /**
      * Show a replay of a saved game.
      *
-     * @param save
+     * @param save the saved game to load
      */
     private void showReplay(GameSave save) {
         ReplayView replayView = new ReplayView(save);
@@ -211,6 +265,12 @@ public class Main extends Application implements SettingsChangeListener {
         root.setCenter(replayView);
     }
 
+    /**
+     * Loads a saved game and reconstructs the game at the specified move.
+     *
+     * @param save      the game save to load
+     * @param moveIndex the move index to restore to
+     */
     private void continueGameFromMove(GameSave save, int moveIndex) {
         // Creates a new GameBoard from the save and replays the game from the given move index
         GameSaveService saveService = new GameSaveService();
@@ -259,7 +319,9 @@ public class Main extends Application implements SettingsChangeListener {
 
 
     /**
-     * Start a new game with predefined settings based on difficulty level
+     * Starts a new game with the specified difficulty level.
+     *
+     * @param difficulty difficulty level (easy, medium, or hard)
      */
     private void startGameWithDifficulty(String difficulty) {
         switch (difficulty) {
@@ -319,7 +381,9 @@ public class Main extends Application implements SettingsChangeListener {
         showTimeSelect();
     }
 
-    // Starts a new game
+    /**
+     * Starts a new game with current settings.
+     */
     private void startNewGame() {
         System.out.println("========== STARTING NEW GAME ==========");
         System.out.println("Board size: " + boardSize);
@@ -405,8 +469,9 @@ public class Main extends Application implements SettingsChangeListener {
 
     /**
      * Helper method that shows time in minutes and seconds
-     * @param seconds
-     * @return
+     *
+     * @param seconds total number of seconds to format
+     * @return formatted time string (MM:SS)
      */
     private String formatTime(int seconds) {
         int minutes = seconds / 60;

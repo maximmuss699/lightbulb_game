@@ -2,7 +2,7 @@
  * Authors:
  * Filip Hladík (xhladi26)
  * Maksim Samusevich (xsamus00)
- *
+ * <p>
  * A view of the actual game board. The logic of showing the game is here.
  */
 package cz.vut.ija.game.view;
@@ -21,39 +21,112 @@ import cz.vut.ija.game.logic.GameSimulator;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 
+/**
+ * Represents the game board in the UI.
+ */
+
 public class BoardView extends GridPane implements BoardObserver {
+    /**
+     * The game board model.
+     */
     private final GameBoard model;
+    /**
+     * Game simulator for checking connections.
+     */
     private final GameSimulator simulator;
+    /**
+     * Controller that handles game logic.
+     */
     private GameController controller;
 
+    /**
+     * Grid of panes for placing tiles.
+     */
     private final StackPane[][] tilePanes;
+    /**
+     * Grid of image views for displaying tiles.
+     */
     private final ImageView[][] tileImages;
 
+    /**
+     * Button for auto-solving the puzzle.
+     */
     private Button solveButton;
+    /**
+     * Hint window for showing hints to the player.
+     */
     private HintView hintWindow;
 
-    // Flag to prevent showing victory dialog multiple times
+    /**
+     * Tracks if victory message has been shown.
+     */
     private boolean victoryShown = false;
 
-    // Flag to prevent showing a hint button or solve button when in replay mode
+    /**
+     * True if this is used for replay mode (prevents showing solve and hint button)
+     */
     private boolean isReplayMode = false;
 
+    /**
+     * Size of each tile in pixels.
+     */
     private static final int TILE_SIZE = 75;
 
-    // Images for wires
+    /**
+     * Image for empty tile.
+     */
     private final Image empty_tile = new Image(getClass().getResourceAsStream("/emptytile/empty_tile.png"));
+    /**
+     * Image for I wire when lit.
+     */
     private final Image wireI_lit = new Image(getClass().getResourceAsStream("/wires/I_lit.png"));
+    /**
+     * Image for I wire when unlit.
+     */
     private final Image wireI_unlit = new Image(getClass().getResourceAsStream("/wires/I_unlit.png"));
+    /**
+     * Image for L wire when lit.
+     */
     private final Image wireL_lit = new Image(getClass().getResourceAsStream("/wires/L_lit.png"));
+    /**
+     * Image for L wire when unlit.
+     */
     private final Image wireL_unlit = new Image(getClass().getResourceAsStream("/wires/L_unlit.png"));
+    /**
+     * Image for T wire when lit.
+     */
     private final Image wireT_lit = new Image(getClass().getResourceAsStream("/wires/T_lit.png"));
+    /**
+     * Image for T wire when unlit.
+     */
     private final Image wireT_unlit = new Image(getClass().getResourceAsStream("/wires/T_unlit.png"));
+    /**
+     * Image for X wire when lit.
+     */
     private final Image wireX_lit = new Image(getClass().getResourceAsStream("/wires/X_lit.png"));
+    /**
+     * Image for X wire when unlit.
+     */
     private final Image wireX_unlit = new Image(getClass().getResourceAsStream("/wires/X_unlit.png"));
+    /**
+     * Image for light bulb when lit.
+     */
     private final Image lightbulb_lit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_lit.png"));
+    /**
+     * Image for light bulb when unlit.
+     */
     private final Image lightbulb_unlit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_unlit.png"));
+    /**
+     * Image for power node.
+     */
     private final Image power_node = new Image(getClass().getResourceAsStream("/powernode/power_node.png"));
 
+    /**
+     * Creates a board view.
+     *
+     * @param model        the game board model
+     * @param isReplayMode true if this is for replay mode
+     */
     public BoardView(GameBoard model, boolean isReplayMode) {
 
         // Call the superclass constructor
@@ -309,6 +382,11 @@ public class BoardView extends GridPane implements BoardObserver {
         }
     }
 
+    /**
+     * Sets the controller for this view.
+     *
+     * @param controller the game controller
+     */
     public void setController(GameController controller) {
         this.controller = controller;
     }
