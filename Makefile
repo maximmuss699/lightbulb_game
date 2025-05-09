@@ -10,7 +10,7 @@ MVN = mvn
 .PHONY: all compile run package clean zip
 
 
-all: compile javadoc
+all: compile javadoc package
 
 compile:
 	$(MVN) compile
@@ -23,9 +23,12 @@ package:
 clean:
 	$(MVN) clean
 
-
 javadoc:
 	$(MVN) javadoc:javadoc
 
+
 zip: clean
-	zip xhladi26 src/* readme.txt pom.xml requirements.pdf
+	mkdir -p xhladi26
+	cp -r src readme.txt pom.xml requirements.pdf xhladi26/
+	zip -r xhladi26.zip xhladi26
+	rm -rf xhladi26

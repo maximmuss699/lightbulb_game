@@ -281,6 +281,7 @@ public class GameController {
 
     /**
      * Exposes the current move count.
+     *
      * @return current move count
      */
     public int getMoveCount() {

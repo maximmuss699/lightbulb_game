@@ -54,9 +54,13 @@ public class HintView extends GridPane {
      */
     private Stage stage;
 
-    /** Sum of all hint rotations needed across the board */
+    /**
+     * Sum of all hint rotations needed across the board
+     */
     private int totalHintClicks = 0;
-    /** Stores the initial total of hint clicks when first calculated */
+    /**
+     * Stores the initial total of hint clicks when first calculated
+     */
     private Integer initialTotalHintClicks = null;
 
     /**

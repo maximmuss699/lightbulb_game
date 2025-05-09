@@ -413,6 +413,7 @@ public class BoardView extends GridPane implements BoardObserver {
 
     /**
      * Update the displayed move count.
+     *
      * @param count the new move count
      */
     public void updateMoveCount(int count) {
