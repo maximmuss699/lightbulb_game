@@ -513,6 +513,7 @@ public class LevelGenerator {
         return 0;
     }
 
+
     /**
      * Rotates a side 90 degrees clockwise.
      *
