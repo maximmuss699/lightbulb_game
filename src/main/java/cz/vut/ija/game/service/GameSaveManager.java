@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A manager class for game seaves. Used for creating saves and adding new moves to the file.
+ */
 package cz.vut.ija.game.service;
 
 import cz.vut.ija.game.model.GameBoard;

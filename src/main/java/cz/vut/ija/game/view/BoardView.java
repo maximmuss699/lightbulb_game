@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A view of the actual game board. The logic of showing the game is here.
+ */
 package cz.vut.ija.game.view;
 
 import cz.vut.ija.game.controller.GameController;

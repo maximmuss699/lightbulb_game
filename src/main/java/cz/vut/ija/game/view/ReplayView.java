@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Replay view used for replaying a saved game. The user can check the moves he made.
+ */
 package cz.vut.ija.game.view;
 
 import cz.vut.ija.game.model.GameBoard;

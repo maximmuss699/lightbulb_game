@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Record used to store position
+ */
 package cz.vut.ija.game.model;
 
 /** Immutable (row,col) coordinate on the board, implemented as Java 21 record. */

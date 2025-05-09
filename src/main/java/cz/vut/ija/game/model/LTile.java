@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Implementation of the L wire tile.
+ */
 package cz.vut.ija.game.model;
 
 import java.util.Set;

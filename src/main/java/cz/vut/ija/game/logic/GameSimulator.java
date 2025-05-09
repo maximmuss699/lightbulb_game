@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Class used for simulation - e.g. finding the best solution possible
+ */
 package cz.vut.ija.game.logic;
 
 import cz.vut.ija.game.model.GameBoard;

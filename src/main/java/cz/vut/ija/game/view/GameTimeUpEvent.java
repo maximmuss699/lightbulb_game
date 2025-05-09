@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A custom event that fires when time is up.
+ */
 package cz.vut.ija.game.view;
 
 import javafx.event.Event;

@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Implementation of the command interface
+ */
 package cz.vut.ija.game.command;
 
 import cz.vut.ija.game.model.GameBoard;

@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A view for creating a custom game with custom parameters.
+ */
 package cz.vut.ija.game.view;
 
 import javafx.collections.FXCollections;

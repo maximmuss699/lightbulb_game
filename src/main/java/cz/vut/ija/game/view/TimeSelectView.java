@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A view used for selecting an amount of time in timed mode.
+ */
 package cz.vut.ija.game.view;
 
 import javafx.collections.FXCollections;

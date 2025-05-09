@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Main class. The app starts here.
+ */
 package cz.vut.ija.game;
 
 import cz.vut.ija.game.controller.GameController;

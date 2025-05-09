@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Class used for dynamically generating levels.
+ */
 package cz.vut.ija.game.generator;
 
 import cz.vut.ija.game.model.*;

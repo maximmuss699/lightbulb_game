@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Enum for storing the side which the tile is facing
+ */
 package cz.vut.ija.game.model;
 
 /** Four cardinal directions. */

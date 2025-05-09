@@ -1,3 +1,11 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Implementation of the game board.
+ * Used for creating new boards and different tiles.
+ */
 package cz.vut.ija.game.model;
 
 import java.util.ArrayList;
