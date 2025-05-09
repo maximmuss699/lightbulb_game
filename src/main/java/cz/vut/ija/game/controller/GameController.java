@@ -288,4 +288,16 @@ public class GameController {
         return moveCount;
     }
 
+    /**
+     * Manually set the current move count and notify the view.
+     * Used to initialize the counter in replay mode.
+     *
+     * @param count the move count to set
+     */
+    public void setMoveCount(int count) {
+        this.moveCount = count;
+        if (moveListener != null) {
+            moveListener.onMove(count);
+        }
+    }
 }

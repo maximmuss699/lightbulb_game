@@ -279,12 +279,16 @@ public class Main extends Application implements SettingsChangeListener {
         gameController = new GameController(board, false, 0);
         saveManager = new GameSaveManager(board, save.getBoardSize(), save.getBulbCount());
         gameController.setSaveManager(saveManager);
+        // Connect move updates to the view’s counter label
+        gameController.setOnMoveUpdated(gameController.getView()::updateMoveCount);
 
         // Record all the moves up to the given index
         List<GameSave.GameMove> movesToReplay = save.getMoves().subList(0, moveIndex + 1);
         for (GameSave.GameMove move : movesToReplay) {
             saveManager.recordMove(move.getRow(), move.getCol(), move.getOldRotation(), move.getNewRotation());
         }
+        // Initialize controller and view to the number of replayed moves
+        gameController.setMoveCount(movesToReplay.size());
 
         // Create a new pane for the game controller
         BorderPane gamePane = new BorderPane();
