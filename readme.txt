@@ -39,3 +39,5 @@ Dokumentace se vytvori do slozky target/docs/apidocs.
 ## Implementace
 Jako základ byla použita logika aplikace z úkolu 1 a 2. UI je pak realizováno pomocí JavaFX.
 Jakožto architekturu jsme zvolili Model View Controller, přičemž každá z částí je uložena v příslušném adresáři.
+
+Obrazky se nachazi v src/main/resources, kvuli metode getResourceAsStream(), ktera bere implicitni umisteni obrazku prave v teto slozce.
