@@ -425,12 +425,16 @@ public class Main extends Application implements SettingsChangeListener {
         // save the game when going back to the main menu
         Button backToMenuButton = new Button("Back to main menu");
         backToMenuButton.setOnAction(event -> {
-            gameController.stopTimer();
-            if (saveManager != null) {
-                saveManager.saveGame(false); // Mark as unfinished
-            }
-            showMainMenu();
+            // Use the confirmation dialog for timed mode
+            gameController.showExitConfirmation(() -> {
+                gameController.stopTimer();
+                if (saveManager != null) {
+                    saveManager.saveGame(false); // Mark as unfinished
+                }
+                showMainMenu();
+            });
         });
+
         backToMenuButton.getStyleClass().add("game-button");
 
         gameController.getView().addEventHandler(GameTimeUpEvent.GAME_TIME_UP, e -> {

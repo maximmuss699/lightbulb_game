@@ -300,4 +300,48 @@ public class GameController {
             moveListener.onMove(count);
         }
     }
+
+    /**
+     * Shows a confirmation dialog when the user tries to exit to the main menu in timed mode.
+     * Pauses the timer while the dialog is displayed.
+     *
+     * @param onConfirm action to execute if the user confirms exit
+     * @return true if the user confirmed the action, false otherwise
+     */
+    public boolean showExitConfirmation(Runnable onConfirm) {
+        // Only show confirmation in timed mode
+        if (!model.isTimedModeEnabled()) {
+            onConfirm.run();
+            return true;
+        }
+
+        // Pause the timer while showing the dialog
+        boolean wasTimerRunning = false;
+        if (timer != null && timer.getStatus() == Animation.Status.RUNNING) {
+            timer.pause();
+            wasTimerRunning = true;
+        }
+
+        // Create and configure the confirmation alert
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit Timed Game?");
+        alert.setHeaderText("You are about to exit a timed game");
+        alert.setContentText("Your progress will be saved, but you will lose the remaining time. You can continue playing the game in classic mode later from the saved games menu.");
+
+        // Show the dialog and wait for user response
+        javafx.scene.control.ButtonType result = alert.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL);
+
+        if (result == javafx.scene.control.ButtonType.OK) {
+            // User confirmed exit
+            onConfirm.run();
+            return true;
+        } else {
+            // User canceled, resume timer if it was running
+            if (wasTimerRunning) {
+                timer.play();
+            }
+            return false;
+        }
+    }
+
 }
