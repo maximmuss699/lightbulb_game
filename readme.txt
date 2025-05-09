@@ -28,6 +28,10 @@ Vytvori validni jar archiv. Pro spusteni je ovsem potreba prilozit cestu ke vsem
 - javafx.fxml
 - javafx.graphics
 
+### Dokumentace
+Dokumentace se vytvori po spusteni make, pripadne ji lze manualne vytvorit zavolanim:
+> mvn javadoc:javadoc
+
 ## Implementace
 Jako základ byla použita logika aplikace z úkolu 1 a 2. UI je pak realizováno pomocí JavaFX.
 Jakožto architekturu jsme zvolili Model View Controller, přičemž každá z částí je uložena v příslušném adresáři.
