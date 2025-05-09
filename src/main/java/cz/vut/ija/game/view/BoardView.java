@@ -1,5 +1,6 @@
 package cz.vut.ija.game.view;
 
+import cz.vut.ija.game.controller.GameController;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import cz.vut.ija.game.model.BoardObserver;
@@ -16,6 +17,8 @@ import javafx.geometry.Insets;
 public class BoardView extends GridPane implements BoardObserver {
     private final GameBoard model;
     private final GameSimulator simulator;
+    private GameController controller;
+
     private final StackPane[][] tilePanes;
     private final ImageView[][] tileImages;
 
@@ -175,8 +178,8 @@ public class BoardView extends GridPane implements BoardObserver {
      * and its current rotation.
      *
      * @param imageView the ImageView representing the tile's image
-     * @param tile the tile whose image is to be updated
-     * @param powered a boolean indicating whether the tile is powered
+     * @param tile      the tile whose image is to be updated
+     * @param powered   a boolean indicating whether the tile is powered
      */
     private void updateTileImage(ImageView imageView, Tile tile, boolean powered) {
         String tileType = tile.getType();
@@ -280,6 +283,10 @@ public class BoardView extends GridPane implements BoardObserver {
             }
         }
 
+        if (controller != null) {
+            controller.stopTimer();
+        }
+
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setTitle("Victory!");
         alert.setHeaderText("All bulbs are lit. Puzzle solved!");
@@ -293,5 +300,9 @@ public class BoardView extends GridPane implements BoardObserver {
         if (hintWindow != null) {
             hintWindow.close();
         }
+    }
+
+    public void setController(GameController controller) {
+        this.controller = controller;
     }
 }

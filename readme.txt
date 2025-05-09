@@ -30,4 +30,4 @@ Vytvori validni jar archiv. Pro spusteni je ovsem potreba prilozit cestu ke vsem
 
 ## Implementace
 Jako základ byla použita logika aplikace z úkolu 1 a 2. UI je pak realizováno pomocí JavaFX.
-Jakozto architekturu jsme potom zvolili pristup Model View Controller.
+Jakožto architekturu jsme zvolili Model View Controller, přičemž každá z částí je uložena v příslušném adresáři.

@@ -136,6 +136,9 @@ public class Main extends Application implements SettingsChangeListener {
     }
 
     private void showMainMenu() {
+        if (gameController != null) {
+            gameController.stopTimer();
+        }
         root.setCenter(mainMenuView);
     }
 
@@ -173,6 +176,11 @@ public class Main extends Application implements SettingsChangeListener {
             return;
         }
 
+        saves.sort((save1, save2) -> {
+            return save2.getSaveDate().compareTo(save1.getSaveDate());
+        });
+
+
         // Create a view for selecting a saved game to replay
         LoadGameView loadGameView = new LoadGameView(saves);
         loadGameView.setOnSaveSelected(save -> showReplay(save));
@@ -201,10 +209,8 @@ public class Main extends Application implements SettingsChangeListener {
         GameSaveService saveService = new GameSaveService();
         GameBoard board = saveService.createBoardFromSave(save, moveIndex);
 
-        gameController = new GameController(board);
-
+        gameController = new GameController(board, false, 0);
         saveManager = new GameSaveManager(board, save.getBoardSize(), save.getBulbCount());
-
         gameController.setSaveManager(saveManager);
 
         // Record all the moves up to the given index
@@ -329,7 +335,7 @@ public class Main extends Application implements SettingsChangeListener {
         GameBoard puzzle = gen.generatePuzzle();
 
         // Initialize controller
-        gameController = new GameController(puzzle);
+        gameController = new GameController(puzzle, timedModeEnabled, timeLimit);
 
         saveManager = new GameSaveManager(puzzle, boardSize, bulbCount);
         gameController.setSaveManager(saveManager);
@@ -341,12 +347,36 @@ public class Main extends Application implements SettingsChangeListener {
         // save the game when going back to the main menu
         Button backToMenuButton = new Button("Back to main menu");
         backToMenuButton.setOnAction(event -> {
+            gameController.stopTimer();
             if (saveManager != null) {
                 saveManager.saveGame(false); // Mark as unfinished
             }
             showMainMenu();
         });
         backToMenuButton.getStyleClass().add("game-button");
+
+        gameController.getView().addEventHandler(GameTimeUpEvent.GAME_TIME_UP, e -> {
+            gameController.stopTimer();
+            showMainMenu();
+        });
+
+
+        // create a new element to showcase time
+        if (timedModeEnabled) {
+            Label timeLabel = new Label("TIME: " + formatTime(timeLimit));
+            timeLabel.getStyleClass().add("time-display");
+
+            gameController.setTimeUpdateListener(remainingTime ->
+                    timeLabel.setText("TIME: " + formatTime(remainingTime))
+            );
+
+            HBox topBar = new HBox(timeLabel);
+            topBar.setAlignment(Pos.CENTER);
+            topBar.setPadding(new Insets(10, 0, 10, 0));
+
+            gamePane.setTop(topBar);
+        }
+
 
         HBox bottomBar = new HBox(backToMenuButton);
         bottomBar.setAlignment(javafx.geometry.Pos.CENTER);
@@ -356,6 +386,7 @@ public class Main extends Application implements SettingsChangeListener {
 
         // Handle game win event
         gameController.getView().addEventHandler(GAME_WIN, e -> {
+            gameController.stopTimer();
             if (saveManager != null) {
                 saveManager.saveGame(true); // Mark the game as finished
             }
@@ -363,6 +394,17 @@ public class Main extends Application implements SettingsChangeListener {
         });
 
         root.setCenter(gamePane);
+    }
+
+    /**
+     * Helper method that shows time in minutes and seconds
+     * @param seconds
+     * @return
+     */
+    private String formatTime(int seconds) {
+        int minutes = seconds / 60;
+        int secs = seconds % 60;
+        return String.format("%02d:%02d", minutes, secs);
     }
 
     /**

@@ -15,6 +15,10 @@ public class GameBoard {
     // Stores the correct rotations for auto-solve
     private int[][] solutionRotations;
 
+    private boolean timedModeEnabled;
+    private int timeLimit;
+    private int remainingTime;
+
     /** Public constructor: initialize every cell to a default WireTile */
     public GameBoard(int rows, int cols) {
         this.rows = rows; this.cols = cols;
@@ -150,4 +154,30 @@ public class GameBoard {
         int diff = (target - current + 360) % 360;
         return diff / 90;
     }
+
+    public boolean isTimedModeEnabled() {
+        return timedModeEnabled;
+    }
+
+    public void setTimedModeEnabled(boolean timedModeEnabled) {
+        this.timedModeEnabled = timedModeEnabled;
+    }
+
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    public void setTimeLimit(int timeLimit) {
+        this.timeLimit = timeLimit;
+        this.remainingTime = timeLimit;
+    }
+
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
 }

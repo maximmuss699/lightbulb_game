@@ -3,9 +3,15 @@ package cz.vut.ija.game.controller;
 import cz.vut.ija.game.model.GameBoard;
 import cz.vut.ija.game.service.GameSaveManager;
 import cz.vut.ija.game.view.BoardView;
+import cz.vut.ija.game.view.GameTimeUpEvent;
 import cz.vut.ija.game.view.TileClickEvent;
 import cz.vut.ija.game.command.Command;
 import cz.vut.ija.game.command.RotateCommand;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.scene.control.Alert;
+import javafx.util.Duration;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -25,6 +31,11 @@ public class GameController {
     // for saving game state
     private GameSaveManager saveManager;
 
+    private TimeUpdateListener timeUpdateListener;
+
+    // for timed mode
+    private Timeline timer;
+
     /**
      * Listener for move count updates.
      */
@@ -32,22 +43,39 @@ public class GameController {
         void onMove(int newCount);
     }
 
+    /**
+     * Listener for receiving time updates
+     */
+    public interface TimeUpdateListener {
+        void onTimeUpdate(int remainingTime);
+    }
+
+
     private MoveListener moveListener;
 
     /**
      * Constructs a controller for a board of the given size.
      */
     public GameController(int rows, int cols) {
-        this(new GameBoard(rows, cols));
+        this(new GameBoard(rows, cols), false, 0);
     }
 
     /**
      * Constructs a controller for an existing GameBoard.
      */
-    public GameController(GameBoard board) {
+    public GameController(GameBoard board, boolean timedModeEnabled, int timeLimit) {
         // Initialize model and view
         this.model = board;
         this.view = new BoardView(model, false);
+        this.view.setController(this);
+
+        board.setTimedModeEnabled(timedModeEnabled);
+        board.setTimeLimit(timeLimit);
+
+        if (timedModeEnabled) {
+            setupTimer();
+        }
+
         // Wire up event handling
         registerHandlers();
     }
@@ -78,6 +106,64 @@ public class GameController {
                 saveManager.recordMove(row, col, oldRotation, newRotation);
             }
         });
+    }
+
+    /**
+     * Creates a new timer using TimeLine
+     */
+    private void setupTimer() {
+        timer = new Timeline(
+                new KeyFrame(Duration.seconds(1), event -> {
+                    int time = model.getRemainingTime();
+                    time--;
+                    model.setRemainingTime(time);
+
+                    if (timeUpdateListener != null) {
+                        timeUpdateListener.onTimeUpdate(time);
+                    }
+
+                    if (time <= 0) {
+                        timer.stop();
+                        handleTimeUp();
+                    }
+                })
+        );
+        timer.setCycleCount(Animation.INDEFINITE);
+        timer.play();
+    }
+
+
+    /**
+     * When time is up, pop up a new alert and save the game.
+     */
+    private void handleTimeUp() {
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("TIME UP");
+            alert.setHeaderText(null);
+            alert.setContentText("TIME UP! Game will be saved and available for replay without timer.");
+
+            alert.setOnHidden(dialogEvent -> {
+                if (saveManager != null) {
+                    saveManager.saveGame(false);
+                }
+
+                view.fireEvent(new GameTimeUpEvent());
+            });
+
+            alert.showAndWait();
+        });
+
+    }
+
+    /**
+     * Stops the timer.
+     */
+    public void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+        }
     }
 
     /**
@@ -131,6 +217,10 @@ public class GameController {
      */
     public void setSaveManager(GameSaveManager saveManager) {
         this.saveManager = saveManager;
+    }
+
+    public void setTimeUpdateListener(TimeUpdateListener listener) {
+        this.timeUpdateListener = listener;
     }
 
 }
