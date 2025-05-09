@@ -29,6 +29,6 @@ javadoc:
 
 zip: clean
 	mkdir -p xhladi26
-	cp -r src readme.txt pom.xml requirements.pdf xhladi26/
+	cp -r src readme.txt pom.xml requirements.pdf Makefile xhladi26/
 	zip -r xhladi26.zip xhladi26
 	rm -rf xhladi26
