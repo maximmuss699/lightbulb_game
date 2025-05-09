@@ -39,10 +39,9 @@ public class ReplayView extends BorderPane {
     }
 
     private void setupView() {
-
         // Set up initial board
         GameBoard board = saveService.createBoardFromSave(save, -1);
-        boardView = new BoardView(board);
+        boardView = new BoardView(board, true);
         setCenter(boardView);
 
         moveLabel = new Label("Move: 0 / " + save.getMoves().size());
@@ -75,7 +74,7 @@ public class ReplayView extends BorderPane {
 
         // Buttons
         playGameButton = new Button("Continue from this move");
-        playGameButton.setDisable(save.isCompleted()); // Zakázat pro dokončené hry
+        playGameButton.setDisable(save.isCompleted());
         playGameButton.getStyleClass().add("game-button");
 
         backButton = new Button("Back to Menu");
@@ -108,7 +107,7 @@ public class ReplayView extends BorderPane {
 
     private void updateBoardToMove(int moveIndex) {
         GameBoard newBoard = saveService.createBoardFromSave(save, moveIndex);
-        boardView = new BoardView(newBoard);
+        boardView = new BoardView(newBoard, true);
         setCenter(boardView);
     }
 

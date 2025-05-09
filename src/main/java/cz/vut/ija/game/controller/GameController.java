@@ -47,7 +47,7 @@ public class GameController {
     public GameController(GameBoard board) {
         // Initialize model and view
         this.model = board;
-        this.view = new BoardView(model);
+        this.view = new BoardView(model, false);
         // Wire up event handling
         registerHandlers();
     }

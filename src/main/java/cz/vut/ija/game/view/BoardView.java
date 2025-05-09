@@ -25,6 +25,9 @@ public class BoardView extends GridPane implements BoardObserver {
     // Flag to prevent showing victory dialog multiple times
     private boolean victoryShown = false;
 
+    // Flag to prevent showing a hint button or solve button when in replay mode
+    private boolean isReplayMode = false;
+
     private static final int TILE_SIZE = 75;
 
     // Images for wires
@@ -41,7 +44,7 @@ public class BoardView extends GridPane implements BoardObserver {
     private final Image lightbulb_unlit = new Image(getClass().getResourceAsStream("/lightbulb/lightbulb_unlit.png"));
     private final Image power_node = new Image(getClass().getResourceAsStream("/powernode/power_node.png"));
 
-    public BoardView(GameBoard model) {
+    public BoardView(GameBoard model, boolean isReplayMode) {
 
         // Call the superclass constructor
         super();
@@ -55,6 +58,8 @@ public class BoardView extends GridPane implements BoardObserver {
 
         this.model = model;
         model.addObserver(this); // Register this view as an observer of the model
+
+        this.isReplayMode = isReplayMode;
 
         // Allocate the tile panes matching the board dimensions
         tilePanes = new StackPane[model.getRows()][model.getCols()];
@@ -70,7 +75,7 @@ public class BoardView extends GridPane implements BoardObserver {
         simulator.propagate();
         applyPowerStyles();
 
-        if (model.getSolutionRotations() != null) {
+        if (model.getSolutionRotations() != null && !isReplayMode) {
             initializeHintAndControls();
         }
     }
