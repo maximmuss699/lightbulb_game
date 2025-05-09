@@ -4,19 +4,15 @@ import cz.vut.ija.game.model.*;
 import cz.vut.ija.game.model.BulbTile;
 import cz.vut.ija.game.model.TTile;
 import java.util.*;
-import java.util.Collections;
-import java.util.ArrayDeque;
-import java.util.Arrays;
+
 
 /**
- * LevelGenerator: generuje řešení podobné hře LightBulb:
- * 1) Vytvoří náhodný strom procházení (perfect maze) přes celé pole.
- * 2) Vybere náhodné listové uzly jako pozice žárovek (BulbTile).
- * 3) Ostatní spoje se vykreslí jako vodiče (Wire/L/T/X).
- * 4) Většina přímých segmentů I se s pravděpodobností T_BIAS změní na T.
- * 5) Po dokončení se otáčky dílků promíchají, aby žádná žárovka nesvítila.
- *
- * Všechny kroky generování jsou zalogovány v konzoli.
+ * LevelGenerator: generates puzzle layouts similar to the LightBulb game:
+ * 1) Builds a perfect maze spanning the entire board.
+ * 2) Selects random leaf nodes as bulb positions (BulbTile).
+ * 3) Renders remaining connections as wires (Wire/L/T/X).
+ * 4) Converts some straight segments (I) to T-junctions with probability T_BIAS.
+ * 5) Scrambles tile rotations so no bulb is initially lit.
  */
 public class LevelGenerator {
     private Set<Position> checkReach = new HashSet<>();
@@ -31,6 +27,7 @@ public class LevelGenerator {
         this.bulbCount = bulbCount;
     }
 
+    // Generate a puzzle with the specified number of bulbs
     public GameBoard generatePuzzle() {
         int desiredT = Math.max(0, bulbCount - 1);
         Tile[][] solution;
@@ -97,7 +94,7 @@ public class LevelGenerator {
             }
         }
         board.setSolutionRotations(solRots);
-        // Zamícháme rotace dílků
+        // Scramble tile rotations
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 Tile t = solution[r][c];
@@ -114,20 +111,20 @@ public class LevelGenerator {
     private Tile[][] generateSolutionTiles() {
         Position start = new Position(rnd.nextInt(rows), rnd.nextInt(cols));
         System.out.println("Start cell: " + start);
-        // 1) Vygenerování dokonalého labyrintu (perfect maze) pomocí DFS
+        // 1) Generate a perfect maze using DFS
         Map<Position, Set<Side>> conn = new HashMap<>();
         Set<Position> visited = new HashSet<>();
         System.out.println("Carving perfect maze...");
         dfsCarve(start, visited, conn);
         System.out.println("Perfect maze carved. Total cells visited: " + visited.size());
-        // Проверка на связность всего поля
+        // Check full connectivity of the maze
         if (visited.size() == rows * cols) {
             System.out.println("Check: all " + visited.size() + " cells are connected in a single tree.");
         } else {
             System.out.println("Warning: only " + visited.size() + " out of " + (rows*cols) + " cells are connected!");
         }
 
-        // 2) Nalezení listů (stupeň 1) s výjimkou startu -------------
+        // 2) Find leaf nodes (degree 1), excluding the start
         List<Position> allLeaves   = new ArrayList<>();
         List<Position> closeLeaves = new ArrayList<>();   // Manhattan ≤1
         for (Position p : conn.keySet()) {
@@ -141,15 +138,15 @@ public class LevelGenerator {
         System.out.println("Far leaves   : " + allLeaves);
         System.out.println("Close leaves : " + closeLeaves);
 
-        // 3) Výběr přesně bulbCount pozic -----------------------------
+        // 3) Select exactly bulbCount positions for bulbs
         List<Position> pool = new ArrayList<>(allLeaves);
         Collections.shuffle(pool, rnd);
         while (pool.size() < bulbCount && !closeLeaves.isEmpty()) {
-            // doplň z blízkých listů, pokud nestačí vzdálené
+            // Add from close leaves if not enough far leaves
             pool.add(closeLeaves.remove(rnd.nextInt(closeLeaves.size())));
         }
         if (pool.size() < bulbCount) {
-            // v krajním případě doplň libovolné ne‐zdrojové buňky (není ideální, ale zaručí počet)
+            // In extreme case, add any non-source cell (not ideal, but ensures count)
             for (Position p : conn.keySet()) {
                 if (p.equals(start) || pool.contains(p)) continue;
                 pool.add(p);
@@ -159,7 +156,7 @@ public class LevelGenerator {
         Collections.shuffle(pool, rnd);
         Set<Position> bulbs = new LinkedHashSet<>(pool.subList(0, bulbCount));
         System.out.println("Selected bulb positions: " + bulbs);
-        // Проверка: все ли лампочки достижимы из построенного дерева
+        // Verify all bulbs are reachable from the carved tree
         Set<Position> reach = new HashSet<>();
         Deque<Position> dq = new ArrayDeque<>();
         reach.add(start); dq.add(start);
@@ -180,7 +177,7 @@ public class LevelGenerator {
             unreachable.removeAll(reach);
             System.out.println("Check: some bulbs unreachable: " + unreachable);
         }
-        // Проверка: все ли лампочки достижимы из источника в полученном дереве
+        // Verify bulbs are reachable from the source in the final tree
         Set<Position> reachable = new HashSet<>();
         Deque<Position> queue = new ArrayDeque<>();
         reachable.add(start); queue.add(start);
@@ -204,12 +201,12 @@ public class LevelGenerator {
             System.out.println("Check failed: some bulbs NOT reachable! Reachable set: " + reachable);
         }
 
-        // 4) Přidání T-bias (změna některých I na T)
+        // 4) Apply T-bias to straight segments
         System.out.println("Applying T-bias (" + T_BIAS + ") to straight segments...");
         addTBias(conn, bulbs);
         System.out.println("T-bias applied.");
 
-        // --- Prune dead-end branches not leading to any bulb ---
+        // Prune dead-end branches not leading to any bulb
         System.out.println("Pruning dead-end branches not leading to bulbs...");
         boolean removed;
         do {
@@ -228,7 +225,7 @@ public class LevelGenerator {
         } while (removed);
         System.out.println("Pruning complete.");
 
-        // --- Optimize: remove unnecessary T-branches ---
+        // Optimize: remove unnecessary T-branches
         System.out.println("Optimizing to remove unnecessary T-branches...");
         for (Position p : new ArrayList<>(conn.keySet())) {
             Set<Side> sides = conn.get(p);
@@ -265,7 +262,7 @@ public class LevelGenerator {
         }
         System.out.println("Optimization complete.");
 
-        // FINAL CONNECTIVITY CHECK
+        // Final connectivity check
         checkReach.clear();
         Deque<Position> checkQueue = new ArrayDeque<>();
         checkReach.add(start);
@@ -288,7 +285,7 @@ public class LevelGenerator {
                     .toList());
         }
 
-        // 5) Sestavení matice dílků
+        // 5) Build the tile matrix
         System.out.println("Building tile matrix...");
         Tile[][] tiles = new Tile[rows][cols];
         for (int r = 0; r < rows; r++) {
@@ -312,6 +309,7 @@ public class LevelGenerator {
         return tiles;
     }
 
+    // Recursive DFS carve to generate the maze
     private void dfsCarve(Position cur, Set<Position> visited, Map<Position,Set<Side>> conn) {
         visited.add(cur);
         List<Side> dirs = new ArrayList<>(Arrays.asList(Side.values()));
@@ -329,12 +327,13 @@ public class LevelGenerator {
         }
     }
 
+    // Add T-junctions to some straight segments based on bias
     private void addTBias(Map<Position,Set<Side>> conn, Set<Position> bulbs) {
         // Collect candidates for T-bias: straight segments not adjacent to bulbs
         List<Position> candidates = new ArrayList<>();
         for (Position p : new ArrayList<>(conn.keySet())) {
             Set<Side> sides = conn.get(p);
-            // pokud je uzel přímo sousedem žárovky, nepřidávej odbočku – zabráníme úniku
+            // If node is directly adjacent to a bulb, do not add a branch – prevents leakage
             boolean nextToBulb = false;
             for (Side sNeighbour : sides) {
                 Position neighbour = p.step(sNeighbour);
@@ -367,6 +366,7 @@ public class LevelGenerator {
         }
     }
 
+    // Choose appropriate wire tile type based on required connections
     private Tile chooseWire(Set<Side> need) {
         switch (need.size()) {
             case 0: case 1: return new WireTile();
@@ -380,6 +380,7 @@ public class LevelGenerator {
         }
     }
 
+    // Compute the rotation needed to match desired connection sides
     private int computeRotation(Set<Side> needs, Tile t) {
         Set<Side> base;
         switch (t.getType()) {
@@ -403,6 +404,7 @@ public class LevelGenerator {
         return 0;
     }
 
+    // Rotate a side clockwise by 90 degrees
     private Side rotate90(Side s) {
         switch (s) {
             case NORTH: return Side.EAST;
@@ -412,16 +414,10 @@ public class LevelGenerator {
         }
     }
 
+    // Check if a position is within board bounds
     private boolean inBounds(Position p) {
         return p.getRow() >= 0 && p.getRow() < rows
                 && p.getCol() >= 0 && p.getCol() < cols;
     }
 
-    private Side sideBetween(Position a, Position b) {
-        if (b.getRow() == a.getRow() + 1 && b.getCol() == a.getCol()) return Side.SOUTH;
-        if (b.getRow() == a.getRow() - 1 && b.getCol() == a.getCol()) return Side.NORTH;
-        if (b.getCol() == a.getCol() + 1 && b.getRow() == a.getRow()) return Side.EAST;
-        if (b.getCol() == a.getCol() - 1 && b.getRow() == a.getRow()) return Side.WEST;
-        throw new IllegalArgumentException("Not adjacent: " + a + " & " + b);
-    }
 }
