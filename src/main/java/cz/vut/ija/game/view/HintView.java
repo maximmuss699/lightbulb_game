@@ -26,6 +26,11 @@ public class HintView extends GridPane {
     private final Button closeButton;
     private Stage stage;
 
+    // Sum of all hint rotations needed across the board
+    private int totalHintClicks = 0;
+    // Stores the initial total of hint clicks when first calculated
+    private Integer initialTotalHintClicks = null;
+
     private static final int TILE_SIZE = 80;
 
     // Unlit images
@@ -146,6 +151,7 @@ public class HintView extends GridPane {
     public void refreshHints() {
         simulator.propagate();
         applyPowerStyles();
+        totalHintClicks = 0;
         for (int r = 0; r < model.getRows(); r++) {
             for (int c = 0; c < model.getCols(); c++) {
                 Tile tile = model.getTile(r, c);
@@ -170,12 +176,17 @@ public class HintView extends GridPane {
                 else if (isSameOrientation(tile, current, target)) {
                     clicks = 0;
                 }
+                totalHintClicks += clicks;
                 if (clicks > 0) {
                     tileHints[r][c].setText("↻" + clicks);
                 } else {
                     tileHints[r][c].setText("");
                 }
             }
+        }
+        // Record the initial total only once
+        if (initialTotalHintClicks == null) {
+            initialTotalHintClicks = totalHintClicks;
         }
     }
 
@@ -198,5 +209,19 @@ public class HintView extends GridPane {
         if (stage != null) {
             stage.hide();
         }
+    }
+
+    /**
+     * @return the sum of all hint clicks across the board
+     */
+    public int getTotalHintClicks() {
+        return totalHintClicks;
+    }
+
+    /**
+     * Returns the initial sum of hint rotations needed across the board.
+     */
+    public int getInitialTotalHintClicks() {
+        return initialTotalHintClicks != null ? initialTotalHintClicks : totalHintClicks;
     }
 }

@@ -3,11 +3,13 @@ package cz.vut.ija.game.view;
 import cz.vut.ija.game.controller.GameController;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
 import cz.vut.ija.game.model.BoardObserver;
 import cz.vut.ija.game.model.GameBoard;
 import cz.vut.ija.game.model.Tile;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import cz.vut.ija.game.logic.GameSimulator;
@@ -32,6 +34,12 @@ public class BoardView extends GridPane implements BoardObserver {
     private boolean isReplayMode = false;
 
     private static final int TILE_SIZE = 75;
+
+    // Move counter label
+    private final Label moveCounterLabel = new Label("Moves: 0");
+
+    // Label for total hint-clicks from the hint window
+    private final Label totalHintClicksLabel = new Label("Optimal moves: 0");
 
     // Images for wires
     private final Image empty_tile = new Image(getClass().getResourceAsStream("/emptytile/empty_tile.png"));
@@ -64,6 +72,10 @@ public class BoardView extends GridPane implements BoardObserver {
 
         this.isReplayMode = isReplayMode;
 
+        // Initialize move counter label
+        moveCounterLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-font-weight: bold;");
+        totalHintClicksLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-font-weight: bold;");
+
         // Allocate the tile panes matching the board dimensions
         tilePanes = new StackPane[model.getRows()][model.getCols()];
         tileImages = new ImageView[model.getRows()][model.getCols()];
@@ -80,6 +92,9 @@ public class BoardView extends GridPane implements BoardObserver {
 
         if (model.getSolutionRotations() != null && !isReplayMode) {
             initializeHintAndControls();
+            // Initialize hint counts immediately
+            hintWindow.refreshHints();
+            totalHintClicksLabel.setText("Optimal moves: " + hintWindow.getTotalHintClicks());
         }
     }
 
@@ -102,8 +117,8 @@ public class BoardView extends GridPane implements BoardObserver {
         solveButton.getStyleClass().add("game-button");
         hintButton.getStyleClass().add("game-button");
 
-        // Arrange buttons horizontally with spacing
-        HBox buttonBox = new HBox(10, solveButton, hintButton);
+        // Arrange buttons horizontally with spacing and include move counter label and hint clicks label
+        HBox buttonBox = new HBox(10, solveButton, hintButton, moveCounterLabel, totalHintClicksLabel);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10, 0, 0, 0));
 
@@ -228,6 +243,7 @@ public class BoardView extends GridPane implements BoardObserver {
 
         if (hintWindow != null) {
             hintWindow.refreshHints();
+            totalHintClicksLabel.setText("Optimal moves: " + hintWindow.getInitialTotalHintClicks());
         }
 
         checkVictory();
@@ -304,5 +320,13 @@ public class BoardView extends GridPane implements BoardObserver {
 
     public void setController(GameController controller) {
         this.controller = controller;
+    }
+
+    /**
+     * Update the displayed move count.
+     * @param count the new move count
+     */
+    public void updateMoveCount(int count) {
+        moveCounterLabel.setText("Moves: " + count);
     }
 }
