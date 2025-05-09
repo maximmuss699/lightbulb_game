@@ -279,4 +279,12 @@ public class GameController {
         this.timeUpdateListener = listener;
     }
 
+    /**
+     * Exposes the current move count.
+     * @return current move count
+     */
+    public int getMoveCount() {
+        return moveCount;
+    }
+
 }

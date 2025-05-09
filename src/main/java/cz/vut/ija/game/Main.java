@@ -408,6 +408,9 @@ public class Main extends Application implements SettingsChangeListener {
         // Initialize controller
         gameController = new GameController(puzzle, timedModeEnabled, timeLimit);
 
+        // Count moves
+        gameController.setOnMoveUpdated(gameController.getView()::updateMoveCount);
+
         saveManager = new GameSaveManager(puzzle, boardSize, bulbCount);
         gameController.setSaveManager(saveManager);
 

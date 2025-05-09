@@ -22,7 +22,6 @@ package:
 
 clean:
 	$(MVN) clean
-	$(MVN) javadoc:clean
 
 
 javadoc:
