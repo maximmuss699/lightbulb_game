@@ -7,7 +7,7 @@
 
 MVN = mvn
 
-.PHONY: all compile run package clean
+.PHONY: all compile run package clean zip
 
 
 all: compile
@@ -23,3 +23,6 @@ package:
 
 clean:
 	$(MVN) clean
+
+zip: clean
+	zip xhladi26 src/* readme.txt pom.xml requirements.pdf
