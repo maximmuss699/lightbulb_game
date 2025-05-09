@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A class used for saving the game. It implements the serializable interface and saves the content into a file.
+ */
 package cz.vut.ija.game.model;
 
 import java.io.Serializable;

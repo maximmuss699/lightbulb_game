@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * An event that fires when the user clicks on a tile.
+ */
 package cz.vut.ija.game.view;
 
 import javafx.event.Event;

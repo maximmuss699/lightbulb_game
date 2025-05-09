@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Interface for the Command pattern
+ */
 package cz.vut.ija.game.command;
 
 /**

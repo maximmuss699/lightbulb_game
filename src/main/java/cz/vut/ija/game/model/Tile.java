@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * An abstract class for each tile to inherit from
+ */
 package cz.vut.ija.game.model;
 
 import java.util.Set;

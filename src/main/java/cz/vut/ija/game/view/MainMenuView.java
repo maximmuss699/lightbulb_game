@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Main menu view. The app opens this view first.
+ */
 package cz.vut.ija.game.view;
 
 import javafx.geometry.Insets;

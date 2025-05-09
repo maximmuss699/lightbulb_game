@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A view for selecting difficulty.
+ */
 package cz.vut.ija.game.view;
 
 import javafx.geometry.Insets;

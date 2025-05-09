@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A view that opens up a new window with a hint for each tile.
+ */
 package cz.vut.ija.game.view;
 
 import cz.vut.ija.game.model.GameBoard;

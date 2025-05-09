@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * Main class for handeling the logic between view and model.
+ */
 package cz.vut.ija.game.controller;
 
 import cz.vut.ija.game.model.GameBoard;

@@ -1,3 +1,10 @@
+/**
+ * Authors:
+ * Filip Hladík (xhladi26)
+ * Maksim Samusevich (xsamus00)
+ *
+ * A service class used for creating game save containing board information, bulb count etc.
+ */
 package cz.vut.ija.game.service;
 
 import cz.vut.ija.game.model.GameBoard;
