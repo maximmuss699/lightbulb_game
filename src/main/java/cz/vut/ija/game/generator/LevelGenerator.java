@@ -6,6 +6,7 @@
  * Class used for dynamically generating levels.
  */
 package cz.vut.ija.game.generator;
+import java.util.stream.Collectors;
 
 import cz.vut.ija.game.model.*;
 import cz.vut.ija.game.model.BulbTile;
@@ -327,6 +328,25 @@ public class LevelGenerator {
             System.out.println("FAILURE: BULBS NOT ALL CONNECTED: " + bulbs.stream()
                     .filter(b -> !checkReach.contains(b))
                     .toList());
+        }
+
+        if (rows == 10 && cols == 10) {
+            // --- Ensure at least one X-junction along the main power path ---
+            List<Position> tNodes = conn.keySet().stream()
+                    .filter(p -> conn.get(p).size() == 3 && checkReach.contains(p))
+                    .collect(Collectors.toList());
+            if (!tNodes.isEmpty()) {
+                Position p = tNodes.get(rnd.nextInt(tNodes.size()));
+                for (Side s : Side.values()) {
+                    if (!conn.get(p).contains(s) && inBounds(p.step(s))) {
+                        // add extra branch to make this a degree-4 node
+                        conn.get(p).add(s);
+                        conn.computeIfAbsent(p.step(s), k -> new HashSet<>()).add(s.opposite());
+                        System.out.println("X-junction forced at " + p + " by connecting to " + p.step(s));
+                        break;
+                    }
+                }
+            }
         }
 
         // 5) Build the tile matrix
