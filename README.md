@@ -46,8 +46,7 @@ All bulbs must be lit to win.
 ## ▶️ Run Instructions
 
 ```bash
-git clone https://your.repo.url/lightbulbgame.git
-cd lightbulbgame
+git clone ...
 
 make         # or: mvn clean package
 make run     # or: mvn javafx:run
